@@ -16,7 +16,9 @@ class SimpleHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b'Webhook received')
+    
+def run_server(port):
+    server = HTTPServer(('', port), SimpleHandler)
+    print(f'Server running on port {port}...')
+    return server
 
-server = HTTPServer(('', 8008), SimpleHandler)
-print('Server running on port 8008...')
-server.serve_forever()
