@@ -27,7 +27,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             repo_url = payload['repository']['clone_url']
             branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
         
-            result = clone_and_check(repo_url, branch) # This function will be implemented later.
+            result = clone_and_check(repo_url, branch) 
         
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
@@ -41,6 +41,18 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.end_headers()
             error_response = {'status': 'error', 'message': str(e)}
             self.wfile.write(json.dumps(error_response).encode())
+
+def clone_and_check(repo_url, branch):
+    temp_dir = tempfile.mkdtemp()
+    try:
+        print(f"Cloning {repo_url} branch {branch} to {temp_dir}")
+        repo = Repo.clone_from(repo_url, temp_dir, branch=branch)
+        return check_python_syntax(temp_dir)
+        
+    except Exception as e:
+        return f"Error during cloning: {str(e)}"
+    finally:
+        shutil.rmtree(temp_dir)
 
 def run_server(port):
     server = HTTPServer(('', port), SimpleHandler)
