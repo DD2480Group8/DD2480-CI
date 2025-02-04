@@ -27,7 +27,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             repo_url = payload['repository']['clone_url']
             branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
         
-            result = clone_and_check(repo_url, branch) 
+            result = clone_check(repo_url, branch) 
         
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
@@ -42,17 +42,44 @@ class SimpleHandler(BaseHTTPRequestHandler):
             error_response = {'status': 'error', 'message': str(e)}
             self.wfile.write(json.dumps(error_response).encode())
 
-def clone_and_check(repo_url, branch):
+def clone_check(repo_url, branch):
     temp_dir = tempfile.mkdtemp()
     try:
         print(f"Cloning {repo_url} branch {branch} to {temp_dir}")
         repo = Repo.clone_from(repo_url, temp_dir, branch=branch)
-        return check_python_syntax(temp_dir)
+        return syntax_check(temp_dir)
         
     except Exception as e:
         return f"Error during cloning: {str(e)}"
     finally:
         shutil.rmtree(temp_dir)
+
+def syntax_check(directory):
+    python_files = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.py'):
+                python_files.append(os.path.join(root, file))
+    
+    if not python_files:
+        return "No Python files found to check"
+    
+    output = StringIO()
+    reporter = JSONReporter(output)
+    
+    pylint_opts = [
+        '--disable=all', 
+        '--enable=syntax-error,undefined-variable', 
+        *python_files
+    ]
+    
+    try:
+        pylint.lint.Run(pylint_opts, reporter=reporter, exit=False)
+        result = output.getvalue()
+        return "Syntax check passed" if not result.strip() else f"Syntax errors found: {result}"
+    except Exception as e:
+        return f"Error during syntax check: {str(e)}"
+
 
 def run_server(port):
     server = HTTPServer(('', port), SimpleHandler)
