@@ -12,10 +12,9 @@ def server():
     port = 8088
     server = run_server(port)
     thread = threading.Thread(target=server.serve_forever)
-    thread.daemon = True  # Daemon threads are abruptly stopped when program exits
+    thread.daemon = True
     thread.start()
-    
-    # Give the server a moment to start
+
     time.sleep(1)
     
     yield f"http://localhost:{port}"
@@ -25,9 +24,18 @@ def server():
     server.server_close()
     thread.join()
 
-def test_webhook_endpoint(server):
-    """Test the webhook endpoint"""
-    response = requests.post(f"{server}")
+def test_valid_post_request(server):
+    """Test valid webhook POST request"""
+
+    mock_payload = {
+        "repository": {"clone_url": "https://github.com/FMurkz/DD2480-CI.git"},
+        "ref": "refs/heads/main"
+    }
+    
+    response = requests.post(f"{server}/", json=mock_payload)  
+
     assert response.status_code == 200
-    data = response.text
-    assert data == 'Webhook received'
+    
+    data = response.json()
+    assert data["status"] == "success"
+    assert "message" in data
