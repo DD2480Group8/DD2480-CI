@@ -71,3 +71,17 @@ def test_clone_check_valid_request():
     assert "message" in result
     assert result["repository"]["url"] == repo_url
     assert result["repository"]["branch"] == branch
+
+
+def test_clone_check_invalid_request():
+    """Test invalid clone_check request"""
+
+    repo_url = "https://github.com/invalid/repo.git"  
+    branch = "main"
+
+    result = clone_check(repo_url, branch)
+
+    assert result["status"] == "error"
+    assert "message" in result
+    assert "Error during cloning" in result["message"]
+    
