@@ -80,7 +80,13 @@ def syntax_check(directory):
         return {
             "status": "warning",
             "message": "No Python files found to check",
-            "files_checked": []
+            "repository": {
+                "url": "repo_url",
+                "branch": "branch_name"
+            },
+            "files_checked": [],
+            "error_count": 0,
+            "details": {}
         }
     
     output = StringIO()
