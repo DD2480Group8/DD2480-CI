@@ -39,3 +39,22 @@ def test_valid_post_request(server):
     data = response.json()
     assert data["status"] == "success"
     assert "message" in data
+
+
+def test_invalid_post_request(server):
+    """Test invalid webhook POST request"""
+
+    mock_payload = {
+        "repository": {"clone_url": "https://github.com/FMurkz/DD2480-CI.git"}
+    }
+    
+    response = requests.post(f"{server}/github-webhook/", json=mock_payload)
+    
+    assert response.status_code == 500
+    
+    data = response.json()
+    
+    assert data["status"] == "error" 
+    assert "message" in data
+    assert "ref" in data["message"]
+
