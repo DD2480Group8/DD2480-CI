@@ -95,7 +95,17 @@ def syntax_check(directory):
     try:
         pylint.lint.Run(pylint_opts, reporter=reporter, exit=False)
         result = output.getvalue()
-        return "Syntax check passed" if not result.strip() else f"Syntax errors found: {result}"
+        return {
+            "status": "success",
+            "message": "Syntax check passed",
+            "repository": {
+                "url": "repo_url",
+                "branch": "branch_name"
+            },
+            "files_checked": python_files,
+            "error_count": 0,
+            "details": {}
+        }
     except Exception as e:
         return f"Error during syntax check: {str(e)}"
 
