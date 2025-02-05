@@ -2,7 +2,7 @@ import pytest
 import requests
 import threading
 import time
-from app.CIServer import run_server
+from app.CIServer import run_server, clone_check
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from app.CIServer import SimpleHandler
 
@@ -58,3 +58,16 @@ def test_invalid_post_request(server):
     assert "message" in data
     assert "ref" in data["message"]
 
+
+def test_clone_check_valid_request():
+    """Test valid clone_check request"""
+
+    repo_url = "https://github.com/FMurkz/DD2480-CI.git"
+    branch = "main"
+
+    result = clone_check(repo_url, branch)
+
+    assert result["status"] == "success"
+    assert "message" in result
+    assert result["repository"]["url"] == repo_url
+    assert result["repository"]["branch"] == branch
