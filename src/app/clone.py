@@ -1,7 +1,7 @@
 import tempfile
 import shutil
 from git import Repo
-from syntax_check import syntax_check
+from app.syntax_check import syntax_check
 def clone_check(repo_url, branch):
     temp_dir = tempfile.mkdtemp()
     try:

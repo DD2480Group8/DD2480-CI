@@ -7,9 +7,9 @@ from git import Repo
 import pylint.lint
 from pylint.reporters import JSONReporter
 from io import StringIO
-from clone import clone_check
-from syntax_check import syntax_check
-from runTests import run_tests
+from app.clone import clone_check
+from app.syntax_check import syntax_check
+from app.runTests import run_tests
 
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):

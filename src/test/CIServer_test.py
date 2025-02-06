@@ -2,7 +2,9 @@ import pytest
 import requests
 import threading
 import time
-from app.CIServer import run_server, clone_check
+
+from app.CIServer import run_server
+from app.clone import clone_check
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from app.CIServer import SimpleHandler
 
