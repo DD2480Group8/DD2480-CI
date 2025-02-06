@@ -2,7 +2,6 @@ import tempfile
 import shutil
 from git import Repo
 from syntax_check import syntax_check
-from runTests import run_tests
 def clone_check(repo_url, branch):
     temp_dir = tempfile.mkdtemp()
     try:
@@ -10,7 +9,6 @@ def clone_check(repo_url, branch):
         repo = Repo.clone_from(repo_url, temp_dir, branch=branch)
         
         result = syntax_check(temp_dir)
-        test_results = run_tests(temp_dir)
         result["repository"] = {
             "url": repo_url,
             "branch": branch

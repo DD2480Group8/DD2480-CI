@@ -35,10 +35,11 @@ class SimpleHandler(BaseHTTPRequestHandler):
             else:
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
             result = clone_check(repo_url, branch) 
+            test_results = run_tests()
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            response = {'status': 'success', 'message': result }
+            response = {'status': 'success', 'message': result, "test_results": test_results }
             # self.wfile.write(json.dumps(response).encode())
             
         except Exception as e:
