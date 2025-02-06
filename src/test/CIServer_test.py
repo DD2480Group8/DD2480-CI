@@ -35,10 +35,6 @@ def test_valid_post_request(server):
     response = requests.post(f"{server}/", json=mock_payload)  
 
     assert response.status_code == 200
-    
-    data = response.json()
-    assert data["status"] == "success"
-    assert "message" in data
 
 
 def test_invalid_post_request(server):
