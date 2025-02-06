@@ -35,14 +35,14 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             response = {'status': 'success', 'message': result}
-            self.wfile.write(json.dumps(response).encode())
+            # self.wfile.write(json.dumps(response).encode())
             
         except Exception as e:
             self.send_response(500)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             error_response = {'status': 'error', 'message': str(e)}
-            self.wfile.write(json.dumps(error_response).encode())
+            # self.wfile.write(json.dumps(error_response).encode())
 
 
 def run_server(port):
