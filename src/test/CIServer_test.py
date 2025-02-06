@@ -2,6 +2,12 @@ import pytest
 import requests
 import threading
 import time
+import sys
+from pathlib import Path
+sys.path.extend([
+    str(Path(__file__).parent.parent),
+    str(Path(__file__).parent.parent / 'app')
+])
 
 from app.CIServer import run_server
 from app.clone import clone_check
