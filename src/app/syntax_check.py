@@ -1,3 +1,7 @@
+import os
+import pylint.lint
+from io import StringIO
+from pylint.reporters import JSONReporter
 
 def syntax_check(directory):
     python_files = []
