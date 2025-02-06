@@ -27,8 +27,12 @@ class SimpleHandler(BaseHTTPRequestHandler):
             payload = json.loads(post_data.decode('utf-8'))
             
             repo_url = payload['repository']['clone_url']
-            branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
-        
+            
+            print(payload['ref'].split('/')[-2].lower())
+            if payload['ref'].split('/')[-2].lower() == 'issue':
+                branch = payload['ref'].split('/')[-2] + '/' + payload['ref'].split('/')[-1]
+            else:
+                branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
             result = clone_check(repo_url, branch) 
         
             self.send_response(200)
