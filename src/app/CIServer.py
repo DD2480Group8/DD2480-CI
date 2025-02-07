@@ -35,7 +35,8 @@ class SimpleHandler(BaseHTTPRequestHandler):
             else:
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
             result = clone_check(repo_url, branch) 
-            test_results = run_tests()
+            test_results = run_tests(result)
+            remove_temp_folder(result)
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -43,11 +44,15 @@ class SimpleHandler(BaseHTTPRequestHandler):
             # self.wfile.write(json.dumps(response).encode())
             
         except Exception as e:
+            print(f"Error: {str(e)}")
             self.send_response(500)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             error_response = {'status': 'error', 'message': str(e)}
             # self.wfile.write(json.dumps(error_response).encode())
+
+def remove_temp_folder(folder):
+    shutil.rmtree(folder)
 
 
 def run_server(port):
