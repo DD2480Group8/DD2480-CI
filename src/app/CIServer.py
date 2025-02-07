@@ -41,10 +41,18 @@ class SimpleHandler(BaseHTTPRequestHandler):
             else:
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
             result = clone_check(repo_url, branch) 
-            test_results = run_tests()
-            token = os.getenv('GITHUB_TOKEN')
+            test_results = run_tests(result)
             gh = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/tests")
             gh.send_commit_status("success", "Tests passed", payload['after'], "1") 
+
+            if test_results:
+                print("Tests Passed")
+            else:
+                print("One or more tests Failed")
+                
+            remove_temp_folder(result)
+            token = os.getenv('GITHUB_TOKEN')
+            
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -52,12 +60,16 @@ class SimpleHandler(BaseHTTPRequestHandler):
             # self.wfile.write(json.dumps(response).encode())
             
         except Exception as e:
+            print(f"Error: {str(e)}")
             gh.send_commit_status("failure", "Tests failed", payload['after'], "1")
             self.send_response(500)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             error_response = {'status': 'error', 'message': str(e)}
             # self.wfile.write(json.dumps(error_response).encode())
+
+def remove_temp_folder(folder):
+    shutil.rmtree(folder)
 
 
 def run_server(port):
