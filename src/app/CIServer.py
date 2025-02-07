@@ -36,6 +36,11 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
             result = clone_check(repo_url, branch) 
             test_results = run_tests(result)
+            if test_results:
+                print("Tests Passed")
+            else:
+                print("One or more tests Failed")
+                
             remove_temp_folder(result)
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
