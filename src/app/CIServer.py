@@ -6,10 +6,16 @@ import tempfile
 from git import Repo
 import pylint.lint
 from pylint.reporters import JSONReporter
+from notify import GithubNotification
 from io import StringIO
 from clone import clone_check
 from syntax_check import syntax_check
 from runTests import run_tests
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -36,6 +42,9 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
             result = clone_check(repo_url, branch) 
             test_results = run_tests()
+            token = os.getenv('GITHUB_TOKEN')
+            gh = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/tests")
+            gh.send_commit_status("success", "Tests passed", payload['after'], "1") 
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -43,6 +52,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             # self.wfile.write(json.dumps(response).encode())
             
         except Exception as e:
+            gh.send_commit_status("failure", "Tests failed", payload['after'], "1")
             self.send_response(500)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
