@@ -35,3 +35,44 @@ def set_commit_status(owner, repo, sha, token, state, description, target_url, c
     else:
         print(f"Failed to update commit status: {response.status_code}")
         print(response.text)
+
+def notify_commit_status(result):
+    """
+    Set the GitHub commit status based on the test results.
+    
+    :param result: The result object containing the return code and output information from the test
+    """
+    owner = "DD2480Group8"
+    repo = "DD2480-CI"
+    
+    # Get the current commit SHA-1 hash
+    sha = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
+    
+    token = "personal_access_token"  #GitHub Personal Access Token
+    
+    # Set state and description based on the test result
+    if result.returncode == 0:
+        state = "success"
+        description = "Tests passed"
+    else:
+        state = "failure"
+        description = f"Tests failed: {result.stdout}"
+    
+    target_url = "http://example.com/test/results"  # Replace with your test results URL
+    context = "ci/tests"  # Typically "ci/build" or "ci/tests" to indicate the status context
+    
+    set_commit_status(
+        owner=owner,
+        repo=repo,
+        sha=sha,
+        token=token,
+        state=state,
+        description=description,
+        target_url=target_url,
+        context=context
+    )
+
+# # Example: Run tests and notify GitHub with the status
+# if __name__ == "__main__":
+#     result = subprocess.run(["pytest", "--tb=short", "test/"], capture_output=True, text=True)
+#     notify_commit_status(result)
