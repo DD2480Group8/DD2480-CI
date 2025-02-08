@@ -12,6 +12,8 @@ from clone import clone_check
 from syntax_check import syntax_check
 from runTests import run_tests
 from dotenv import load_dotenv
+import stat
+import errno
 
 # Load environment variables from .env file
 load_dotenv()
@@ -69,8 +71,17 @@ class SimpleHandler(BaseHTTPRequestHandler):
             # self.wfile.write(json.dumps(error_response).encode())
 
 def remove_temp_folder(folder):
-    shutil.rmtree(folder)
+    shutil.rmtree(folder, onerror=handle_remove_readonly)
 
+def handle_remove_readonly(func, path, exc):
+    # Change permissions to writeable if needed
+    excvalue = exc[1]
+    if func in (os.rmdir, os.remove, os.unlink) and excvalue.errno == errno.EACCES:
+        # Ensure the item is writeable
+        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+        func(path)  # Retry the removal
+    else:
+        raise excvalue
 
 def run_server(port):
     server = HTTPServer(('', port), SimpleHandler)
