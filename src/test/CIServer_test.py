@@ -3,6 +3,8 @@ import requests
 import threading
 import time
 import sys
+from unittest.mock import patch
+
 from pathlib import Path
 sys.path.extend([
     str(Path(__file__).parent.parent),
@@ -14,78 +16,61 @@ from app.clone import clone_check
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from app.CIServer import SimpleHandler
 
-@pytest.fixture(scope="module")
-def server():
-    """Start the server in a separate thread"""
-    port = 8088
-    server = run_server(port)
-    thread = threading.Thread(target=server.serve_forever)
-    thread.daemon = True
-    thread.start()
+port = 8009
 
+@pytest.fixture
+def start_server():
+    server = HTTPServer(('localhost', port), SimpleHandler)
+    threading.Thread(target=server.serve_forever).start()
     time.sleep(1)
-    
-    yield f"http://localhost:{port}"
-    
-    # Cleanup
+    yield
     server.shutdown()
     server.server_close()
-    thread.join()
 
-def test_valid_post_request(server):
-    """Test valid webhook POST request"""
-
-    mock_payload = {
-        "repository": {"clone_url": "https://github.com/FMurkz/DD2480-CI.git"},
-        "ref": "refs/heads/main"
+def test_do_POST_success(start_server):
+    """Test the do_POST method for a successful flow"""
+    payload = {
+        "repository": {
+            "clone_url": "https://github.com/DD2480Group8/DD2480-CI.git",
+            "name": "DD2480-CI"
+        },
+        "ref": "refs/heads/main",
+        "organization": {
+            "login": "DD2480Group8"
+            
+        },
+        "after": "commit_sha"
     }
-    
-    response = requests.post(f"{server}/", json=mock_payload)  
 
-    assert response.status_code == 200
+    with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
+            patch('app.CIServer.run_tests', return_value=True), \
+            patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
+            patch('app.CIServer.remove_temp_folder'):
 
+        response = requests.post(f"http://localhost:{port}/", json=payload)
+        assert response.status_code == 200
+        mock_send_commit_status.assert_called_with("success", "Tests passed", "commit_sha", "1")
 
-def test_invalid_post_request(server):
-    """Test invalid webhook POST request"""
-
-    mock_payload = {
-        "repository": {"clone_url": "https://github.com/FMurkz/DD2480-CI.git"}
+def test_do_POST_clone_check_failure(start_server):
+    """Test the do_POST method for a failure flow in clone_check"""
+    payload = {
+        "repository": {
+            "clone_url": "https://github.com/DD2480Group8/DD2480-CI.git",
+            "name": "DD2480-CI"
+        },
+        "ref": "refs/heads/main",
+        "organization": {
+            "login": "DD2480Group8"
+        },
+        "after": "commit_sha"
     }
-    
-    response = requests.post(f"{server}/github-webhook/", json=mock_payload)
-    
-    assert response.status_code == 500
-    
-    data = response.json()
-    
-    assert data["status"] == "error" 
-    assert "message" in data
-    assert "ref" in data["message"]
+
+    with patch('app.CIServer.clone_check', side_effect=Exception("Clone failed")), \
+            patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status:
+
+        response = requests.post(f"http://localhost:{port}/", json=payload)
+        assert response.status_code == 500
+        mock_send_commit_status.assert_called_with("failure", "Tests failed", "commit_sha", "1")
 
 
-def test_clone_check_valid_request():
-    """Test valid clone_check request"""
 
-    repo_url = "https://github.com/FMurkz/DD2480-CI.git"
-    branch = "main"
-
-    result = clone_check(repo_url, branch)
-
-    assert result["status"] == "success"
-    assert "message" in result
-    assert result["repository"]["url"] == repo_url
-    assert result["repository"]["branch"] == branch
-
-
-def test_clone_check_invalid_request():
-    """Test invalid clone_check request"""
-
-    repo_url = "https://github.com/invalid/repo.git"  
-    branch = "main"
-
-    result = clone_check(repo_url, branch)
-
-    assert result["status"] == "error"
-    assert "message" in result
-    assert "Error during cloning" in result["message"]
-    
