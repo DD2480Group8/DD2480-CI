@@ -69,7 +69,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             # self.wfile.write(json.dumps(error_response).encode())
 
 def remove_temp_folder(folder):
-    shutil.rmtree(folder)
+    shutil.rmtree(folder, onerror=handle_remove_readonly)
 
 
 def run_server(port):
