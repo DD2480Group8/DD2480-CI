@@ -12,6 +12,8 @@ from clone import clone_check
 from syntax_check import syntax_check
 from runTests import run_tests
 from dotenv import load_dotenv
+import stat
+import errno
 
 # Load environment variables from .env file
 load_dotenv()
