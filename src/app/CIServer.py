@@ -32,7 +32,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
         
         try:
             payload = json.loads(post_data.decode('utf-8'))
-            
+            token = os.getenv('GITHUB_TOKEN')
             repo_url = payload['repository']['clone_url']
             
             print(payload['ref'].split('/')[-2].lower())
