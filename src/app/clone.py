@@ -35,10 +35,14 @@ def cleanup_tmp_directory():
             raise
 
 def clone_check(repo_url, branch):
-
     try:
+        # Ensure tmp directory exists
+        ensure_tmp_directory()
+        
+        # Create a unique directory for this clone
         temp_dir = os.path.join(TMP_PATH, str(uuid.uuid4()))
-        os.mkdir(temp_dir)
+        os.makedirs(temp_dir, mode=0o755)  # Create with proper permissions
+        
         print(f"Cloning {repo_url} branch {branch} to {temp_dir}")
         repo = Repo.clone_from(repo_url, temp_dir, branch=branch)
         
@@ -47,6 +51,10 @@ def clone_check(repo_url, branch):
         return temp_dir
         
     except Exception as e:
+        # Clean up temp_dir if it was created
+        if 'temp_dir' in locals() and os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
+            
         return {
             "status": "error",
             "message": f"Error during cloning: {str(e)}",
