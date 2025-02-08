@@ -51,6 +51,26 @@ def test_do_POST_success(start_server):
         assert response.status_code == 200
         mock_send_commit_status.assert_called_with("success", "Tests passed", "commit_sha", "1")
 
+def test_do_POST_clone_check_failure(start_server):
+    """Test the do_POST method for a failure flow in clone_check"""
+    payload = {
+        "repository": {
+            "clone_url": "https://github.com/DD2480Group8/DD2480-CI.git",
+            "name": "DD2480-CI"
+        },
+        "ref": "refs/heads/main",
+        "organization": {
+            "login": "DD2480Group8"
+        },
+        "after": "commit_sha"
+    }
+
+    with patch('app.CIServer.clone_check', side_effect=Exception("Clone failed")), \
+            patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status:
+
+        response = requests.post(f"http://localhost:{port}/", json=payload)
+        assert response.status_code == 500
+        mock_send_commit_status.assert_called_with("failure", "Tests failed", "commit_sha", "1")
 
 
 
