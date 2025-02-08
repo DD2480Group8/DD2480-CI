@@ -36,6 +36,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             payload = json.loads(post_data.decode('utf-8'))
             token = os.getenv('GITHUB_TOKEN')
             repo_url = payload['repository']['clone_url']
+            gh = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/tests")
             
             print(payload['ref'].split('/')[-2].lower())
             if payload['ref'].split('/')[-2].lower() == 'issue':
@@ -44,7 +45,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
             result = clone_check(repo_url, branch) 
             test_results = run_tests(result)
-            gh = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/tests")
+            
             gh.send_commit_status("success", "Tests passed", payload['after'], "1") 
 
             if test_results:
