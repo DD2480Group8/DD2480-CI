@@ -4,8 +4,35 @@ from git import Repo
 import os
 from syntax_check import syntax_check
 import uuid
+
 PROJ_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TMP_PATH = os.path.abspath(os.path.join(PROJ_ROOT, "tmp/"))
+
+def ensure_tmp_directory():
+    """
+    Ensures that the tmp directory exists.
+    Creates it if it doesn't exist, with proper permissions.
+    """
+    try:
+        if not os.path.exists(TMP_PATH):
+            os.makedirs(TMP_PATH, mode=0o755)  # rwxr-xr-x permissions
+            print(f"Created tmp directory at {TMP_PATH}")
+    except Exception as e:
+        print(f"Error creating tmp directory: {str(e)}")
+        raise
+
+def cleanup_tmp_directory():
+    """
+    Cleans up old temporary directories in the tmp folder.
+    """
+    if os.path.exists(TMP_PATH):
+        try:
+            shutil.rmtree(TMP_PATH)
+            os.makedirs(TMP_PATH, mode=0o755)
+            print("Cleaned up tmp directory")
+        except Exception as e:
+            print(f"Error cleaning up tmp directory: {str(e)}")
+            raise
 
 def clone_check(repo_url, branch):
 
