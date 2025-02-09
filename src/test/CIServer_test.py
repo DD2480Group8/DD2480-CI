@@ -84,18 +84,9 @@ def test_syntax_check_success():
         mock_walk.return_value = [
             (mock_directory, ['subdir'], ['file1.py', 'file2.py'])
         ]      
-        # Mocking syntax_check to return a success response
-        with patch('app.syntax_check') as mock_syntax_check:
-            mock_syntax_check.return_value = {
-                "status": "success",
-                "message": "Syntax check passed",
-                "repository": {"url": "repo_url", "branch": "main"},
-                "files_checked": ['/tmp/test_repo/file1.py', '/tmp/test_repo/file2.py'],
-                "error_count": 0,
-                "details": {}
-            }                     
-            result = syntax_check(mock_directory)         
-            assert result["status"] == "success"  
+                             
+        result = syntax_check(mock_directory)         
+        assert result["status"] == "success"  
 
 
 
