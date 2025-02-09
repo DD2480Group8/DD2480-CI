@@ -101,3 +101,20 @@ def test_syntax_check_success():
             result = syntax_check(mock_directory)
             
             assert result["status"] == "success"  
+
+
+
+def test_syntax_check_failure():
+    """Test the syntax_check function for a failed syntax check"""
+    mock_directory = '/tmp/test_repo'
+
+    with patch('os.walk') as mock_walk:
+        mock_walk.return_value = [
+            (mock_directory, ['subdir'], ['file1.py', 'file2.py'])
+        ]
+    
+        with patch('pylint.lint.Run', side_effect=Exception("Syntax error encountered")) as mock_pylint_run:
+           
+            result = syntax_check(mock_directory)                     
+            assert result["status"] == "error"  
+            assert "Syntax errors found" in str(result["message"])
