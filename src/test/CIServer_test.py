@@ -113,3 +113,15 @@ def test_syntax_check_failure():
             result = syntax_check(mock_directory)                     
             assert result["status"] == "error"  
             assert "Syntax errors found" in str(result["message"])
+
+def test_syntax_check_warning():
+    """Test the syntax_check function for the warning case when no Python files are found"""
+    
+    mock_directory = '/tmp/test_repo'
+    with patch('os.walk') as mock_walk:
+        mock_walk.return_value = [
+            (mock_directory, ['subdir'], ['file1.txt', 'file2.md'])
+        ]
+        result = syntax_check(mock_directory)
+        assert result["status"] == "warning"
+        assert "No Python files found to check" in result["message"]
