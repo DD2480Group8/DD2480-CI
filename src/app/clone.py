@@ -17,15 +17,7 @@ def ensure_tmp_directory():
         print(f"Error creating tmp directory: {str(e)}")
         raise
 
-def cleanup_tmp_directory():
-    if os.path.exists(TMP_PATH):
-        try:
-            shutil.rmtree(TMP_PATH)
-            os.makedirs(TMP_PATH, mode=0o755)
-            print("Cleaned up tmp directory")
-        except Exception as e:
-            print(f"Error cleaning up tmp directory: {str(e)}")
-            raise
+
 
 def clone_check(repo_url, branch):
     try:
