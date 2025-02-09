@@ -78,14 +78,12 @@ def test_do_POST_clone_check_failure(start_server):
 
 def test_syntax_check_success():
     """Test the syntax_check function for a successful syntax check"""
-   
     mock_directory = '/tmp/test_repo'
 
     with patch('os.walk') as mock_walk:
         mock_walk.return_value = [
             (mock_directory, ['subdir'], ['file1.py', 'file2.py'])
-        ]
-        
+        ]      
         # Mocking syntax_check to return a success response
         with patch('app.syntax_check') as mock_syntax_check:
             mock_syntax_check.return_value = {
@@ -95,11 +93,8 @@ def test_syntax_check_success():
                 "files_checked": ['/tmp/test_repo/file1.py', '/tmp/test_repo/file2.py'],
                 "error_count": 0,
                 "details": {}
-            }
-            
-            
-            result = syntax_check(mock_directory)
-            
+            }                     
+            result = syntax_check(mock_directory)         
             assert result["status"] == "success"  
 
 
