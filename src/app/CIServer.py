@@ -44,6 +44,13 @@ class SimpleHandler(BaseHTTPRequestHandler):
             else:
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
             result = clone_check(repo_url, branch) 
+            syntaxcheck = syntax_check(result)
+            if syntaxcheck:
+                print("Syntax Check Passed")
+            else:
+                print("Syntax Check Failed")
+                gh.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
+                raise Exception("Syntax check failed")
             test_results = run_tests(result)
             
             gh.send_commit_status("success", "Tests passed", payload['after'], "1") 
@@ -64,11 +71,18 @@ class SimpleHandler(BaseHTTPRequestHandler):
             
         except Exception as e:
             print(f"Error: {str(e)}")
-            gh.send_commit_status("failure", "Tests failed", payload['after'], "1")
-            self.send_response(500)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            error_response = {'status': 'error', 'message': str(e)}
+            if e == "Syntax check failed":
+                gh.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                error_response = {'status': 'error', 'message': str(e)}
+            else:
+                gh.send_commit_status("failure", "Tests failed", payload['after'], "1")
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                error_response = {'status': 'error', 'message': str(e)}
             # self.wfile.write(json.dumps(error_response).encode())
 
 def remove_temp_folder(folder):
