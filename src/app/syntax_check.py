@@ -1,5 +1,6 @@
 import os
 import pylint.lint
+import json
 from io import StringIO
 from pylint.reporters import JSONReporter
 
@@ -35,6 +36,19 @@ def syntax_check(directory):
     try:
         pylint.lint.Run(pylint_opts, reporter=reporter, exit=False)
         result = output.getvalue()
+        errors = json.loads(result)
+        if len(errors) > 0:
+            return {
+                "status": "error",
+                "message": "Syntax errors found",
+                "repository": {
+                    "url": "repo_url",
+                    "branch": "branch_name"
+                },
+                "files_checked": python_files,
+                "error_count": len(errors),
+                "details": errors
+            }
         return {
             "status": "success",
             "message": "Syntax check passed",
