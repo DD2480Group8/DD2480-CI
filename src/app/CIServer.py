@@ -54,7 +54,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 print("Syntax Check Failed")
                 gh.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
                 raise Exception("Syntax check failed")
-            test_results = run_tests(result)
+            test_results, test_logs = run_tests(result)
             
             gh.send_commit_status("success", "Tests passed", payload['after'], "1") 
 
@@ -66,7 +66,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             if not commit_id:   
                 raise Exception("Error cloning repository.")
             
-            log_build(commit_id)                       
+            log_build(commit_id, test_logs)                       
             build_url = get_build_url(commit_id)
                 
             remove_temp_folder(result)
