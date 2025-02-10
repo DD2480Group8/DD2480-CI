@@ -26,3 +26,7 @@ def create_database():
         print("Database created and table initialized successfully.")
     except Exception as e:
         print(f"Error during database creation: {e}")
+
+def get_build_url(commit_id):
+    """Generate a unique URL for a specific build."""
+    return f"https://github.com/DD2480Group8/DD2480-CI/commit/{commit_id}"
