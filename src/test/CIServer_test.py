@@ -268,10 +268,11 @@ def test_notification_network_error(start_server):
          patch('app.CIServer.GithubNotification.send_commit_status', side_effect=RequestException("Network error")), \
          patch('app.CIServer.remove_temp_folder'):
         
-        response = requests.post(f"http://localhost:{port}/", json=payload)
-        assert response.status_code == 200
-        
-        # The CI process should continue even if notification fails
+        try:
+            response = requests.post(f"http://localhost:{port}/", json=payload)
+            assert response.status_code == 200
+        except requests.exceptions.ConnectionError:
+            pytest.fail("Server connection failed")
 
 def test_notification_invalid_repo(start_server):
     payload = {
