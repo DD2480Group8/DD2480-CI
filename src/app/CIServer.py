@@ -14,7 +14,7 @@ from runTests import run_tests
 from dotenv import load_dotenv
 import stat
 import errno
-from build_history import log_build, get_build_url, create_database, clone_check_DB
+from build_history import log_build, get_build_url, create_database
 
 create_database()
 
@@ -46,7 +46,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 branch = payload['ref'].split('/')[-2] + '/' + payload['ref'].split('/')[-1]
             else:
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
-            result = clone_check(repo_url, branch) 
+            commit_id, result = clone_check(repo_url, branch) 
             syntaxcheck = syntax_check(result)
             if syntaxcheck:
                 print("Syntax Check Passed")
@@ -63,7 +63,6 @@ class SimpleHandler(BaseHTTPRequestHandler):
             else:
                 print("One or more tests Failed")
 
-            commit_id, temp_dir = clone_check_DB(repo_url, branch)  
             if not commit_id:   
                 raise Exception("Error cloning repository.")
             
