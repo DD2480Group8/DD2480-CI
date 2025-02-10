@@ -47,3 +47,21 @@ def clone_check_DB(repo_url, branch):
         return None, None
     finally:
         shutil.rmtree(temp_dir)
+
+def log_build(commit_id):
+    """Log the build details to the database."""
+    try:
+        print(f"Logging build for commit: {commit_id}")
+        conn = sqlite3.connect('build_history.db')
+        cursor = conn.cursor()
+        build_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S') 
+        build_url = get_build_url(commit_id)  
+        cursor.execute('''
+            INSERT INTO builds (commit_id, build_date, build_url)
+            VALUES (?, ?, ?)
+        ''', (commit_id, build_date, build_url))
+        conn.commit()
+        conn.close()
+        print(f"Build logged: {commit_id} on {build_date}, URL: {build_url}")
+    except Exception as e:
+        print(f"Error logging build: {e}")
