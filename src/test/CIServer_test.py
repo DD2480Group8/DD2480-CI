@@ -270,3 +270,23 @@ def test_notification_network_error(start_server):
         
         response = requests.post(f"http://localhost:{port}/", json=payload)
         assert response.status_code == 200
+
+def test_notification_invalid_repo(start_server):
+    payload = {
+        "repository": {
+            "clone_url": "https://github.com/invalid/repo.git",
+            "name": "invalid-repo"
+        },
+        "ref": "refs/heads/main",
+        "organization": {
+            "login": "invalid-org"
+        },
+        "after": "commit_sha"
+    }
+    
+    with patch('app.CIServer.clone_check', side_effect=Exception("Invalid repository")), \
+         patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status:
+        
+        response = requests.post(f"http://localhost:{port}/", json=payload)
+        assert response.status_code == 500
+        mock_send_status.assert_called_with("failure", "Tests failed", "commit_sha", "1")
