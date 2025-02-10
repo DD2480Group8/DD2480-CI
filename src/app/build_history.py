@@ -59,8 +59,8 @@ def log_build(commit_id, build_logs=None):
         build_url = get_build_url(commit_id)  
         cursor.execute('''
             INSERT INTO builds (commit_id, build_date, build_logs, build_url)
-            VALUES (?, ?, ?)
-        ''', (commit_id, build_date,build_logs if build_logs else 'No logs available', build_url))
+            VALUES (?, ?, ?, ?)
+        ''', (commit_id, build_date, build_logs if build_logs else 'No logs available', build_url))
         conn.commit()
         conn.close()
         print(f"Build logged: {commit_id} on {build_date}, \nLogs: {build_logs} \nURL: {build_url}")
