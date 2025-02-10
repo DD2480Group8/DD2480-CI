@@ -83,7 +83,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             print(f"Error: {str(e)}")
             if e == "Syntax check failed":
                 ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
-                self.send_response(200)
+                self.send_response(500)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 error_response = {'status': 'error', 'message': str(e)}
