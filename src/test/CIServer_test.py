@@ -224,3 +224,27 @@ def test_notification_both_success(start_server):
         assert len(calls) == 2
         assert any(call[0][0] == "success" and "syntax" in call[0][1].lower() for call in calls)
         assert any(call[0][0] == "success" and "test" in call[0][1].lower() for call in calls)
+
+def test_notification_syntax_failure(start_server):
+    payload = {
+        "repository": {
+            "clone_url": "https://github.com/DD2480Group8/DD2480-CI.git",
+            "name": "DD2480-CI"
+        },
+        "ref": "refs/heads/main",
+        "organization": {
+            "login": "DD2480Group8"
+        },
+        "after": "commit_sha"
+    }
+    
+    with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
+         patch('app.CIServer.syntax_check', return_value=False), \
+         patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status, \
+         patch('app.CIServer.remove_temp_folder'):
+        
+        response = requests.post(f"http://localhost:{port}/", json=payload)
+        assert response.status_code == 500
+        
+        mock_send_status.assert_called_with("failure", "Syntax check failed", "commit_sha", "1")
+        assert mock_send_status.call_count == 1
