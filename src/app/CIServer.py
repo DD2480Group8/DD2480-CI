@@ -14,6 +14,9 @@ from runTests import run_tests
 from dotenv import load_dotenv
 import stat
 import errno
+from build_history import log_build, get_build_url, create_database, clone_check_DB
+
+create_database()
 
 # Load environment variables from .env file
 load_dotenv()
@@ -59,6 +62,13 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 print("Tests Passed")
             else:
                 print("One or more tests Failed")
+
+            commit_id, temp_dir = clone_check_DB(repo_url, branch)  
+            if not commit_id:   
+                raise Exception("Error cloning repository.")
+            
+            log_build(commit_id)                       
+            build_url = get_build_url(commit_id)
                 
             remove_temp_folder(result)
             token = os.getenv('GITHUB_TOKEN')
