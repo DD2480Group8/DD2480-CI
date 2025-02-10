@@ -13,6 +13,7 @@ def create_database():
                 id INTEGER PRIMARY KEY,
                 commit_id TEXT,
                 build_date TEXT,
+                build_logs TEXT,
                 build_url TEXT  
             )
         ''')
@@ -48,7 +49,7 @@ def clone_check_DB(repo_url, branch):
     finally:
         shutil.rmtree(temp_dir)
 
-def log_build(commit_id):
+def log_build(commit_id, build_logs=None):
     """Log the build details to the database."""
     try:
         print(f"Logging build for commit: {commit_id}")
@@ -57,11 +58,11 @@ def log_build(commit_id):
         build_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S') 
         build_url = get_build_url(commit_id)  
         cursor.execute('''
-            INSERT INTO builds (commit_id, build_date, build_url)
+            INSERT INTO builds (commit_id, build_date, build_logs, build_url)
             VALUES (?, ?, ?)
-        ''', (commit_id, build_date, build_url))
+        ''', (commit_id, build_date,build_logs if build_logs else 'No logs available', build_url))
         conn.commit()
         conn.close()
-        print(f"Build logged: {commit_id} on {build_date}, URL: {build_url}")
+        print(f"Build logged: {commit_id} on {build_date}, \nLogs: {build_logs} \nURL: {build_url}")
     except Exception as e:
         print(f"Error logging build: {e}")
