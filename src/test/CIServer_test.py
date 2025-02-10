@@ -248,3 +248,25 @@ def test_notification_syntax_failure(start_server):
         
         mock_send_status.assert_called_with("failure", "Syntax check failed", "commit_sha", "1")
         assert mock_send_status.call_count == 1
+
+def test_notification_network_error(start_server):
+    payload = {
+        "repository": {
+            "clone_url": "https://github.com/DD2480Group8/DD2480-CI.git",
+            "name": "DD2480-CI"
+        },
+        "ref": "refs/heads/main",
+        "organization": {
+            "login": "DD2480Group8"
+        },
+        "after": "commit_sha"
+    }
+    
+    with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
+         patch('app.CIServer.syntax_check', return_value=True), \
+         patch('app.CIServer.run_tests', return_value=True), \
+         patch('app.notify.requests.post', side_effect=RequestException("Network error")), \
+         patch('app.CIServer.remove_temp_folder'):
+        
+        response = requests.post(f"http://localhost:{port}/", json=payload)
+        assert response.status_code == 200
