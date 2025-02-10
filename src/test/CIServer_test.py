@@ -45,7 +45,7 @@ def test_do_POST_success(start_server):
         "after": "commit_sha"
     }
 
-    with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
+    with patch('app.CIServer.clone_check', return_value=('commit_id_value', '/tmp/repo_path')), \
             patch('app.CIServer.syntax_check', return_value=True), \
             patch('app.CIServer.run_tests', return_value=True), \
             patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
