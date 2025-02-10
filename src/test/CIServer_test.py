@@ -141,3 +141,30 @@ def test_syntax_check_at_least_one_error_found():
         assert result["error_count"] == 1
         assert len(result["files_checked"]) == 2
         assert "Syntax errors found" in result["message"]
+
+def test_set_commit_status_success(start_server):
+    """Test setting commit status to 'success' after passing syntax and tests"""
+    
+    payload = {
+        "repository": {
+            "clone_url": "https://github.com/DD2480Group8/DD2480-CI.git",
+            "name": "DD2480-CI"
+        },
+        "ref": "refs/heads/main",
+        "organization": {
+            "login": "DD2480Group8"
+        },
+        "after": "commit_sha"
+    }
+    
+    with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
+         patch('app.CIServer.syntax_check', return_value=True), \
+         patch('app.CIServer.run_tests', return_value=True), \
+         patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
+         patch('app.CIServer.remove_temp_folder'):
+
+        response = requests.post(f"http://localhost:{port}/", json=payload)
+        assert response.status_code == 200
+        
+        # Verify if the send_commit_status function was called with 'success' status
+        mock_send_commit_status.assert_called_with("success", "Tests passed", "commit_sha", "1")
