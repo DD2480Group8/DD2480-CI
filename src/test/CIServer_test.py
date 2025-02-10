@@ -1,9 +1,11 @@
+from io import StringIO
+import json
 import pytest
 import requests
 import threading
 import time
 import sys
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from app.syntax_check import syntax_check 
 
 from pathlib import Path
@@ -80,14 +82,20 @@ def test_syntax_check_success():
     """Test the syntax_check function for a successful syntax check"""
     mock_directory = '/tmp/test_repo'
 
-    with patch('os.walk') as mock_walk:
-        mock_walk.return_value = [
-            (mock_directory, ['subdir'], ['file1.py', 'file2.py'])
-        ]      
-                             
-        result = syntax_check(mock_directory)         
-        assert result["status"] == "success"  
+    with patch('os.walk') as mock_walk, \
+         patch('pylint.lint.Run') as mock_run, \
+         patch('app.syntax_check.StringIO') as mock_stringio:
 
+        mock_walk.return_value = [(mock_directory, ['subdir'], ['file1.py', 'file2.py'])]
+        mock_output = Mock()
+        mock_output.getvalue.return_value = '[]'
+        mock_stringio.return_value = mock_output
+
+        result = syntax_check(mock_directory)
+
+        assert result["status"] == "success"
+        assert result["error_count"] == 0
+        assert len(result["files_checked"]) == 2  
 
 
 def test_syntax_check_failure():
