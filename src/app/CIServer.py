@@ -36,7 +36,8 @@ class SimpleHandler(BaseHTTPRequestHandler):
             payload = json.loads(post_data.decode('utf-8'))
             token = os.getenv('GITHUB_TOKEN')
             repo_url = payload['repository']['clone_url']
-            gh = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/tests")
+            ghSyntax = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/syntaxcheck")
+            ghTest = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/tests")
             
             print(payload['ref'].split('/')[-2].lower())
             if payload['ref'].split('/')[-2].lower() == 'issue':
@@ -47,13 +48,22 @@ class SimpleHandler(BaseHTTPRequestHandler):
             syntaxcheck = syntax_check(result)
             if syntaxcheck:
                 print("Syntax Check Passed")
+                ghSyntax.send_commit_status("success", "Syntax check passed", payload['after'], "1") 
             else:
                 print("Syntax Check Failed")
-                gh.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
+                ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
                 raise Exception("Syntax check failed")
             test_results = run_tests(result)
+            if test_results:
+                print("Test Passed")
+                ghTest.send_commit_status("success", "Tests passed", payload['after'], "1") 
+            else:
+                print("Test Failed")
+                ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
+                raise Exception("Tests failed")
+
             
-            gh.send_commit_status("success", "Tests passed", payload['after'], "1") 
+            
 
             if test_results:
                 print("Tests Passed")
