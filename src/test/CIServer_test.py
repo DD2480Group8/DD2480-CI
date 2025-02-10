@@ -265,11 +265,13 @@ def test_notification_network_error(start_server):
     with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
          patch('app.CIServer.syntax_check', return_value=True), \
          patch('app.CIServer.run_tests', return_value=True), \
-         patch('app.notify.requests.post', side_effect=RequestException("Network error")), \
+         patch('app.CIServer.GithubNotification.send_commit_status', side_effect=RequestException("Network error")), \
          patch('app.CIServer.remove_temp_folder'):
         
         response = requests.post(f"http://localhost:{port}/", json=payload)
         assert response.status_code == 200
+        
+        # The CI process should continue even if notification fails
 
 def test_notification_invalid_repo(start_server):
     payload = {
