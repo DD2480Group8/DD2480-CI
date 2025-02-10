@@ -82,13 +82,13 @@ class SimpleHandler(BaseHTTPRequestHandler):
         except Exception as e:
             print(f"Error: {str(e)}")
             if e == "Syntax check failed":
-                gh.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
+                ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 error_response = {'status': 'error', 'message': str(e)}
             else:
-                gh.send_commit_status("failure", "Tests failed", payload['after'], "1")
+                ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
                 self.send_response(500)
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
