@@ -66,8 +66,9 @@ class SimpleHandler(BaseHTTPRequestHandler):
             if not commit_id:   
                 raise Exception("Error cloning repository.")
             
-            log_build(commit_id, test_logs)                       
-            build_url = get_build_url(commit_id)
+            if test_logs != "Test logs here": 
+                log_build(commit_id, test_logs)                       
+                build_url = get_build_url(commit_id)
                 
             remove_temp_folder(result)
             token = os.getenv('GITHUB_TOKEN')
