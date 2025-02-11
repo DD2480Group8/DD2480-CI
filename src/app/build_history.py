@@ -2,13 +2,14 @@ import sqlite3
 from datetime import datetime
 
 def create_database(table_name='builds'):
-    """Create the database and the specified table if it doesn't exist."""
+    """Create the database and the specified table if it doesn't exist, and add missing columns."""
     print(f"Creating database and table '{table_name}' if not exists.")  
     try:
         print("Connecting to the database...")
         conn = sqlite3.connect('build_history.db')  
         cursor = conn.cursor()
         
+        # Create the table if it doesn't exist
         cursor.execute(f'''
             CREATE TABLE IF NOT EXISTS {table_name} (
                 id INTEGER PRIMARY KEY,
@@ -18,6 +19,16 @@ def create_database(table_name='builds'):
                 build_url TEXT  
             )
         ''')
+        
+        # Check if the 'build_logs' column exists, and add it if not
+        cursor.execute(f"PRAGMA table_info({table_name});")
+        columns = cursor.fetchall()
+        column_names = [column[1] for column in columns]
+
+        if 'build_logs' not in column_names:
+            print(f"Adding 'build_logs' column to table '{table_name}'.")
+            cursor.execute(f"ALTER TABLE {table_name} ADD COLUMN build_logs TEXT;")
+        
         conn.commit()
         
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -50,4 +61,3 @@ def log_build(commit_id, build_logs=None, table_name='builds'):
         print(f"Build logged: {commit_id} on {build_date}, \nLogs: {build_logs} \nURL: {build_url}")
     except Exception as e:
         print(f"Error logging build: {e}")
-
