@@ -11,6 +11,18 @@ class GithubNotification:
         self.context = context
         
     def send_commit_status(self, state, description, sha, run_id):
+        """
+        Sends a commit status update to GitHub.
+
+        Args:
+            state (str): Commit state
+            description (str): Short description of the status.
+            sha (str): SHA hash of the commit to update.
+            run_id (str): Unique identifier for the related CI/CD run.
+
+        Raises:
+            requests.exceptions.RequestException: If the request fails
+        """
         url = f"https://api.github.com/repos/{self.owner}/{self.repo}/statuses/{sha}"
         headers = {
             "Authorization": f"token {self.token}",
