@@ -14,3 +14,12 @@ def setup_db():
     conn.commit()
     conn.close()
 
+def test_create_database(setup_db):
+    """Test if the 'test_builds' table is created in the database."""
+    conn = sqlite3.connect('build_history.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cursor.fetchall()
+    conn.close()
+
+    assert ('test_builds',) in tables, "The 'test_builds' table should exist in the database."
