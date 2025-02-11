@@ -5,6 +5,16 @@ from io import StringIO
 from pylint.reporters import JSONReporter
 
 def syntax_check(directory):
+    """
+    Checks Python files in a directory for syntax errors using Pylint.
+
+    Args:
+        directory (str): Path to the directory containing Python files.
+
+    Returns:
+        dict: Contains status ("success", "error", or "warning"), a message, 
+              files checked, error count, and details if errors exist.
+    """
     python_files = []
     for root, _, files in os.walk(directory):
         for file in files:
