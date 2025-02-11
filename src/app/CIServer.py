@@ -21,6 +21,7 @@ load_dotenv()
 
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        """Handles GET requests by responding with a simple message."""
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -29,6 +30,16 @@ class SimpleHandler(BaseHTTPRequestHandler):
         self.wfile.write(message.encode())
 
     def do_POST(self):
+        """
+        Handles POST requests from GitHub webhooks.
+
+        Extracts repository and branch details from the payload, Clones the repository.
+        Runs a syntax check using Pylint, Executes tests.
+        Updates the commit status on GitHub and sends a JSON response with the results.
+
+        Raises:
+            Exception: If syntax check or tests fail, GitHub commit status is updated accordingly.
+        """
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
         
@@ -96,9 +107,23 @@ class SimpleHandler(BaseHTTPRequestHandler):
             # self.wfile.write(json.dumps(error_response).encode())
 
 def remove_temp_folder(folder):
+    """
+    Removes a temporary folder.
+
+    Args:
+        folder (str): Path of the directory to be removed.
+    """
     shutil.rmtree(folder, onerror=handle_remove_readonly)
 
 def handle_remove_readonly(func, path, exc):
+    """
+    Handles removal of read-only files by modifying permissions.
+
+    Args:
+        func: Function that triggered the error
+        path: File path causing the issue
+        exc: Exception details
+    """
     # Change permissions to writeable if needed
     excvalue = exc[1]
     if func in (os.rmdir, os.remove, os.unlink) and excvalue.errno == errno.EACCES:
@@ -109,6 +134,15 @@ def handle_remove_readonly(func, path, exc):
         raise excvalue
 
 def run_server(port):
+    """
+    Starts an HTTP server on the specified port.
+
+    Args:
+        port: Port number for the server
+
+    Returns:
+        HTTPServer: The running server instance.
+    """
     server = HTTPServer(('', port), SimpleHandler)
     print(f'Server running on port {port}...')
     return server
