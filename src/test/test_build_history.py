@@ -23,3 +23,9 @@ def test_create_database(setup_db):
     conn.close()
 
     assert ('test_builds',) in tables, "The 'test_builds' table should exist in the database."
+
+def test_get_build_url():
+    """Test if the build URL is generated correctly."""
+    commit_id = "123abc"
+    expected_url = "https://github.com/DD2480Group8/DD2480-CI/commit/123abc"
+    assert get_build_url(commit_id) == expected_url
