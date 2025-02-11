@@ -9,6 +9,15 @@ PROJ_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TMP_PATH = os.path.abspath(os.path.join(PROJ_ROOT, "tmp/"))
 
 def ensure_tmp_directory():
+    """
+    Ensures the existence of the temporary directory used for cloning repositories.
+
+    Creates the directory at TMP_PATH if it does not exist and sets permissions to 755.
+    Prints a message when the directory is created.
+
+    Raises:
+        Exception: If an error occurs while creating the directory.
+    """
     try:
         if not os.path.exists(TMP_PATH):
             os.makedirs(TMP_PATH, mode=0o755)
@@ -20,6 +29,20 @@ def ensure_tmp_directory():
 
 
 def clone_check(repo_url, branch):
+    """
+    Clones a Git repository to a temporary directory and returns the directory path.
+
+    Args:
+        repo_url (str): URL of the Git repository to clone.
+        branch (str): The branch to clone.
+
+    Returns:
+        str: Path to the cloned repository if successful.
+        dict: Error details if cloning fails.
+
+    Raises:
+        Exception: If an error occurs during cloning, the function cleans up and returns an error dictionary.
+    """
     try:
         ensure_tmp_directory()
         temp_dir = os.path.join(TMP_PATH, str(uuid.uuid4()))
