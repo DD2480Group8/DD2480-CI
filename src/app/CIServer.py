@@ -55,56 +55,76 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 branch = payload['ref'].split('/')[-2] + '/' + payload['ref'].split('/')[-1]
             else:
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
-            result = clone_check(repo_url, branch) 
+            
+            try:
+                result = clone_check(repo_url, branch)
+            except Exception as clone_error:
+                print(f"Error: {str(clone_error)}")
+                try:
+                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
+                except Exception as notify_error:
+                    if "Network error" in str(notify_error):
+                        print(f"Warning: Failed to send notification: {str(notify_error)}")
+                raise clone_error
+
             syntaxcheck = syntax_check(result)
-            if syntaxcheck:
-                print("Syntax Check Passed")
-                ghSyntax.send_commit_status("success", "Syntax check passed", payload['after'], "1") 
-            else:
-                print("Syntax Check Failed")
-                ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
+            
+            try:
+                if syntaxcheck:
+                    print("Syntax Check Passed")
+                    ghSyntax.send_commit_status("success", "Syntax check passed", payload['after'], "1") 
+                else:
+                    print("Syntax Check Failed")
+                    ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
+                    raise Exception("Syntax check failed")
+            except Exception as notify_error:
+                if "Network error" in str(notify_error):
+                    print(f"Warning: Failed to send notification: {str(notify_error)}")
+                else:
+                    raise notify_error
+
+            if not syntaxcheck:
                 raise Exception("Syntax check failed")
+
             test_results = run_tests(result)
-            if test_results:
-                print("Test Passed")
-                ghTest.send_commit_status("success", "Tests passed", payload['after'], "1") 
-            else:
-                print("Test Failed")
-                ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
+            try:
+                if test_results:
+                    print("Test Passed")
+                    ghTest.send_commit_status("success", "Tests passed", payload['after'], "1") 
+                else:
+                    print("Test Failed")
+                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
+            except Exception as notify_error:
+                if "Network error" in str(notify_error):
+                    print(f"Warning: Failed to send notification: {str(notify_error)}")
+                else:
+                    raise notify_error
+
+            if not test_results:
                 raise Exception("Tests failed")
 
-            
-            
-
-            if test_results:
-                print("Tests Passed")
-            else:
-                print("One or more tests Failed")
-                
             remove_temp_folder(result)
-            token = os.getenv('GITHUB_TOKEN')
             
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             response = {'status': 'success', 'message': result, "test_results": test_results }
-            # self.wfile.write(json.dumps(response).encode())
             
         except Exception as e:
             print(f"Error: {str(e)}")
-            if e == "Syntax check failed":
-                ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
-                self.send_response(500)
-                self.send_header('Content-type', 'application/json')
-                self.end_headers()
-                error_response = {'status': 'error', 'message': str(e)}
-            else:
-                ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
-                self.send_response(500)
-                self.send_header('Content-type', 'application/json')
-                self.end_headers()
-                error_response = {'status': 'error', 'message': str(e)}
-            # self.wfile.write(json.dumps(error_response).encode())
+            try:
+                if "Syntax check failed" in str(e):
+                    self.send_response(500)
+                    self.send_header('Content-type', 'application/json')
+                    self.end_headers()
+                    error_response = {'status': 'error', 'message': str(e)}
+                else:
+                    self.send_response(500)
+                    self.send_header('Content-type', 'application/json')
+                    self.end_headers()
+                    error_response = {'status': 'error', 'message': str(e)}
+            except Exception as send_error:
+                print(f"Error sending response: {str(send_error)}")
 
 def remove_temp_folder(folder):
     """
