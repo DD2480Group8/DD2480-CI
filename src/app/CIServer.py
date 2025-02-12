@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import tempfile
+import uuid
 from git import Repo
 import pylint.lint
 from pylint.reporters import JSONReporter
@@ -16,63 +17,34 @@ import stat
 import errno
 import re
 from build_history import log_build, get_github_commit_url, create_database, get_logs, get_log
+from queue import Queue
+import threading
 
 create_database()
 # Load environment variables from .env file
 load_dotenv()
 
+task_queue = Queue()
 
-class SimpleHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        # Parse the requested path
-        path = self.path
-        field_names = ["id", "commit_id", "build_date", "build_logs", "github_commit_url"]
-
+def process_queue():
+    """
+    Worker function that processes tasks from the queue continuously.
+    """
+    while True:
+        task = task_queue.get()
+        if task is None:
+            break
         
-        if path == "/":
-            # Handle the root path
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-
-            self.end_headers()
-            message = get_logs()
-            data = [dict(zip(field_names, item)) for item in message]
-            self.wfile.write(json.dumps(data).encode())
-        
-        elif re.match(r"^/\d+$", path):  # Check if the path matches "/{id}" where id is a number
-            # Extract the ID from the path
-            id_value = path[1:]  # Remove the leading '/'
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            message = get_log(id_value)
-            data = dict(zip(field_names, message))
-            self.wfile.write(json.dumps(data).encode())
-        
-        else:
-            # Handle unknown paths
-            self.send_response(404)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-            message = "404 Not Found"
-            self.wfile.write(message.encode())
-
-    def do_POST(self):
-        """
-        Handles POST requests from GitHub webhooks.
-
-        Extracts repository and branch details from the payload, Clones the repository.
-        Runs a syntax check using Pylint, Executes tests.
-        Updates the commit status on GitHub and sends a JSON response with the results.
-
-        Raises:
-            Exception: If syntax check or tests fail, GitHub commit status is updated accordingly.
-        """
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        
+        payload, build_id = task
         try:
-            payload = json.loads(post_data.decode('utf-8'))
+            process_webhook_payload(payload)
+        except Exception as e:
+            print(f"Error processing task {build_id}: {str(e)}")
+        finally:
+            task_queue.task_done()
+
+def process_webhook_payload(payload):
+    try:
             token = os.getenv('GITHUB_TOKEN')
             repo_url = payload['repository']['clone_url']
             ghSyntax = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/syntaxcheck")
@@ -142,31 +114,84 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 
             remove_temp_folder(result)
             
+            return True
+            
+    except Exception as e:
+            print(f"Error: {str(e)}")
+            return False
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        # Parse the requested path
+        path = self.path
+        field_names = ["id", "commit_id", "build_date", "build_logs", "github_commit_url"]
+
+        
+        if path == "/":
+            # Handle the root path
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+
+            self.end_headers()
+            message = get_logs()
+            data = [dict(zip(field_names, item)) for item in message]
+            self.wfile.write(json.dumps(data).encode())
+        
+        elif re.match(r"^/\d+$", path):  # Check if the path matches "/{id}" where id is a number
+            # Extract the ID from the path
+            id_value = path[1:]  # Remove the leading '/'
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            response = {'status': 'success', 'message': result, "test_results": test_results }
+            message = get_log(id_value)
+            data = dict(zip(field_names, message))
+            self.wfile.write(json.dumps(data).encode())
+        
+        else:
+            # Handle unknown paths
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            message = "404 Not Found"
+            self.wfile.write(message.encode())
+
+    def do_POST(self):
+        """
+        Handles POST requests from GitHub webhooks by queueing them for background processing.
+        Immediately returns a 202 Accepted response.
+        """
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+        
+        try:
+            payload = json.loads(post_data.decode('utf-8'))
+            build_id = str(uuid.uuid4())
             
+            # Queue the task for background processing
+            task_queue.put((payload, build_id))
+            
+            # Immediately return success response
+            self.send_response(202)  # 202 Accepted
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = {
+                'status': 'accepted',
+                'message': 'Build queued for processing',
+                'build_id': build_id
+            }
+            self.wfile.write(json.dumps(response).encode())
+            
+        except json.JSONDecodeError as e:
+            self.send_response(400)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            error_response = {'status': 'error', 'message': 'Invalid JSON payload'}
+            self.wfile.write(json.dumps(error_response).encode())
         except Exception as e:
-            print(f"Error: {str(e)}")
-            try:
-                if "Syntax check failed" in str(e):
-                    self.send_response(500)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    error_response = {'status': 'error', 'message': str(e)}
-                elif "Tests failed" in str(e):
-                    self.send_response(500)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    error_response = {'status': 'error', 'message': str(e)}
-                else:
-                    self.send_response(500)
-                    self.send_header('Content-type', 'application/json')
-                    self.end_headers()
-                    error_response = {'status': 'error', 'message': str(e)}
-            except Exception as send_error:
-                print(f"Error sending response: {str(send_error)}")
+            self.send_response(500)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            error_response = {'status': 'error', 'message': str(e)}
+            self.wfile.write(json.dumps(error_response).encode())
 
 def remove_temp_folder(folder):
     """
@@ -197,14 +222,18 @@ def handle_remove_readonly(func, path, exc):
 
 def run_server(port):
     """
-    Starts an HTTP server on the specified port.
-
-    Args:
-        port: Port number for the server
-
-    Returns:
-        HTTPServer: The running server instance.
+    Starts an HTTP server on the specified port with a background worker thread.
     """
+    # Start the worker thread
+    worker_thread = threading.Thread(target=process_queue, daemon=True)
+    worker_thread.start()
+    
     server = HTTPServer(('', port), SimpleHandler)
     print(f'Server running on port {port}...')
-    return server
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        # Signal the worker thread to stop
+        task_queue.put(None)
+        worker_thread.join()
+        server.server_close()
