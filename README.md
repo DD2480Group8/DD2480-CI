@@ -146,6 +146,26 @@ docker run -e GITHUB_TOKEN={your_github_token_here} -p 8008:8008 {name of image}
 - Implemented core feature 2
 - wrote documatation for functions
 
-## How we used git
+
+## How we used github
+We used some prefixes for the commits so that we easily could see what each commit did
+
+- feat: a new implementation was made
+- test: testcase was written for a function or for the program
+- refactor: The code was changed in some way without implementing something new
+- fix: a bug was fixed
+- doc: documentation was added
+- setup: for any comits related to setup
+- deploy: any commits related to deployment of server 
+
+These were the steps we took once an issue was created and a group member was assigned to it
+
+1. A branch was created and named after the issue
+2. All the commits needed were committed
+    - All commits has a prefix
+    - All commits reference the issue by adding (#xx) at the end, xx being the issue number
+5. Once the issue has been fixed a pull request was made to merge it into main
+6. Any merge conflicts were handled
+7. Lastly it was merged into main
 
 ## Our way of working (SEMAT)
