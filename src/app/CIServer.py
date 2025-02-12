@@ -57,14 +57,22 @@ def process_webhook_payload(payload,log_id):
                 branch = payload['ref'].split('/')[-2] + '/' + payload['ref'].split('/')[-1]
             else:
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
-            
+            try:
+                # Send a pending status notification to GitHub
+                ghSyntax.send_commit_status("pending", "Running syntax check", payload['after'], log_id)
+                ghTest.send_commit_status("pending", "Running tests", payload['after'], log_id)
+            except Exception as notify_error:
+                if "Network error" in str(notify_error):
+                    print(f"Warning: Failed to send notification: {str(notify_error)}")
+                raise notify_error
             
             try:
                 commit_id, result = clone_check(repo_url, branch)
             except Exception as clone_error:
                 print(f"Error: {str(clone_error)}")
                 try:
-                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], log_id)
+                    ghTest.send_commit_status("failure", "Clone failed", payload['after'], log_id)
+                    ghSyntax.send_commit_status("failure", "Clone failed", payload['after'], log_id)
                 except Exception as notify_error:
                     if "Network error" in str(notify_error):
                         print(f"Warning: Failed to send notification: {str(notify_error)}")
@@ -86,6 +94,7 @@ def process_webhook_payload(payload,log_id):
                     raise notify_error
 
             if syntaxcheck['status'] == "error":
+                ghTest.send_commit_status("error", "Tests cannot be run due to failing the syntax check", payload['after'], log_id)
                 raise Exception("Syntax check failed")
 
             test_results, test_logs = run_tests(result)
