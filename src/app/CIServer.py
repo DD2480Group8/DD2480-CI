@@ -48,6 +48,7 @@ def process_webhook_payload(payload,log_id):
     try:
             token = os.getenv('GITHUB_TOKEN')
             repo_url = payload['repository']['clone_url']
+            commit_id = payload['after']
             ghSyntax = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/syntaxcheck")
             ghTest = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/tests")
             
