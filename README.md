@@ -168,4 +168,16 @@ These were the steps we took once an issue was created and a group member was as
 6. Any merge conflicts were handled
 7. Lastly it was merged into main
 
-## Our way of working (SEMAT)
+## Our way of working, SEMAT
+We began this project by analyzing the problem and familiarizing ourselves with the environment. Based on our skills and the needs of the
+project, we decided to use Python as the programming language and VSCode as the primary development tool. The principles of our way of
+working were established, focusing on creating a smooth, automated CI pipeline. We integrated GitHub for version control and ngrok to
+expose the local server, setting up a webhook that allowed us to automate repository cloning, syntax checks, and testing. The project
+structure was outlined, with initial practices like task management using GitHub issues, ensuring each task was tracked, and every commit
+was linked to a specific task. As we progressed, the team started using the tools and practices consistently, with everyone becoming
+comfortable with GitHub and ngrok, enabling efficient collaboration and communication. In the “In Place” phase, the entire team had
+integrated these practices and tools into their daily workflow. Everyone had access to the tools required to complete their tasks, and
+the practices were being used by the whole team. We continuously adapted our approach as necessary, ensuring that the CI pipeline
+functioned smoothly and was aligned with the evolving project needs. We didn’t reach the “Working Well” phase yet, as some practices
+still required refinement, but we are confident that the strong foundation we’ve established will allow us to continuously improve and
+reach that stage in the future.
