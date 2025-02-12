@@ -61,3 +61,33 @@ def log_build(commit_id, build_logs=None, table_name='builds'):
         print(f"Build logged: {commit_id} on {build_date}, \nLogs: {build_logs} \nURL: {build_url}")
     except Exception as e:
         print(f"Error logging build: {e}")
+
+def get_logs():
+    """Retrieve all build logs from the database."""
+    try:
+        print("Retrieving build logs from database.")
+        conn = sqlite3.connect('build_history.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM builds")
+        logs = cursor.fetchall()
+        conn.close()
+        print(f"Logs retrieved: {logs}")
+        return logs
+    except Exception as e:
+        print(f"Error retrieving logs: {e}")
+        return []
+
+def get_log(id):
+    """Retrieve a specific build log from the database."""
+    try:
+        print(f"Retrieving build log with id: {id}")
+        conn = sqlite3.connect('build_history.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM builds WHERE id=?", (id,))
+        log = cursor.fetchone()
+        conn.close()
+        print(f"Log retrieved: {log}")
+        return log
+    except Exception as e:
+        print(f"Error retrieving log: {e}")
+        return None
