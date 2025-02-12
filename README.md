@@ -13,12 +13,11 @@ DD2480-CI/
 │   │   ├── notify.py          # GitHub status notification system
 │   │   ├── runTests.py        # Test execution handler
 │   │   ├── syntax_check.py    # Python syntax validation
+│   │   ├── build_history.py    # Create database
 │   │   └── main.py           # Server entry point
 │   └── test/                  # Test suite
+│       ├── test_build_history.py    # Tests for database
 │       └── CIServer_test.py   # Comprehensive tests for CI server
-├── .github/                   # GitHub specific configurations
-│   └── workflows/             # GitHub Actions workflows
-└── venv/                     # Python virtual environment
 ```
 
 ## Key Components
@@ -53,6 +52,7 @@ DD2480-CI/
 - Includes mocked tests for GitHub interactions
 - Tests for success and failure scenarios of the CI pipeline
 - Network error handling and edge case coverage
+
 
 ## Setup - Not using docker
 Install Python 3.13.1
