@@ -113,13 +113,38 @@ def process_webhook_payload(payload,log_id):
                 log_build(commit_id, logs)                       
                 github_commit_url = get_github_commit_url(commit_id)
                 
-            remove_temp_folder(result)
             
             return True
             
     except Exception as e:
-            print(f"Error: {str(e)}")
-            return False
+        return False
+    finally:
+        log_parts = []
+
+        # Add Log ID if it exists
+        if 'log_id' in locals() or 'log_id' in globals():
+            log_parts.append(f"Log ID: {log_id}")
+
+        # Add Commit ID if it exists
+        if 'commit_id' in locals() or 'commit_id' in globals():
+            log_parts.append(f"Commit ID: {commit_id}")
+
+        # Add Syntax Check if both json and syntaxcheck exist
+        if ('json' in locals() or 'json' in globals()) and ('syntaxcheck' in locals() or 'syntaxcheck' in globals()):
+            log_parts.append("\nSyntax Check:\n=================")
+            log_parts.append(json.dumps(syntaxcheck, indent=4))
+            log_parts.append("=================")
+
+        # Add Test Results if test_logs exists
+        if 'test_logs' in locals() or 'test_logs' in globals():
+            log_parts.append("\nTest Results:\n=================")
+            log_parts.append(test_logs)
+            log_parts.append("=================")
+        
+        log_build(commit_id, "".join(log_parts))  # Log the build results                     
+
+        if 'result' in locals() or 'result' in globals():
+            remove_temp_folder(result)
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Parse the requested path
