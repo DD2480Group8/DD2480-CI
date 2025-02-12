@@ -99,20 +99,19 @@ class SimpleHandler(BaseHTTPRequestHandler):
             syntaxcheck = syntax_check(result)
             
             try:
-                if syntaxcheck:
+                if syntaxcheck['status'] == "success":
                     print("Syntax Check Passed")
                     ghSyntax.send_commit_status("success", "Syntax check passed", payload['after'], "1") 
                 else:
                     print("Syntax Check Failed")
                     ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
-                    raise Exception("Syntax check failed")
             except Exception as notify_error:
                 if "Network error" in str(notify_error):
                     print(f"Warning: Failed to send notification: {str(notify_error)}")
                 else:
                     raise notify_error
 
-            if not syntaxcheck:
+            if syntaxcheck['status'] == "error":
                 raise Exception("Syntax check failed")
 
             test_results, test_logs = run_tests(result)
@@ -137,7 +136,8 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 raise Exception("Error cloning repository.")
             
             if test_logs != "Test logs here": 
-                log_build(commit_id, test_logs)                       
+                logs = f"Syntax Check Logs: {syntaxcheck['details']} \nTest Logs: {test_logs}"
+                log_build(commit_id, logs)                       
                 github_commit_url = get_github_commit_url(commit_id)
                 
             remove_temp_folder(result)
@@ -151,6 +151,11 @@ class SimpleHandler(BaseHTTPRequestHandler):
             print(f"Error: {str(e)}")
             try:
                 if "Syntax check failed" in str(e):
+                    self.send_response(500)
+                    self.send_header('Content-type', 'application/json')
+                    self.end_headers()
+                    error_response = {'status': 'error', 'message': str(e)}
+                elif "Tests failed" in str(e):
                     self.send_response(500)
                     self.send_header('Content-type', 'application/json')
                     self.end_headers()
@@ -203,4 +208,3 @@ def run_server(port):
     server = HTTPServer(('', port), SimpleHandler)
     print(f'Server running on port {port}...')
     return server
-
