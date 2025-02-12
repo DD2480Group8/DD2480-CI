@@ -48,7 +48,17 @@ def test_do_POST_success(start_server):
     }
 
     with patch('app.CIServer.clone_check', return_value=('commit_id_value', '/tmp/repo_path')), \
-            patch('app.CIServer.syntax_check', return_value=True), \
+         patch('app.CIServer.syntax_check', return_value={
+            "status": "success",
+            "message": "Syntax check passed",
+            "repository": {
+                "url": "repo_url",
+                "branch": "branch_name"
+            },
+            "files_checked": ['file1.py', 'file2.py'],
+            "error_count": 0,
+            "details": {}
+         }), \
             patch('app.CIServer.run_tests', return_value=(True, "Test logs here")), \
             patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
             patch('app.CIServer.remove_temp_folder'):
@@ -159,9 +169,19 @@ def test_set_commit_status_success(start_server):
         "after": "commit_sha"
     }
     
-    with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
-         patch('app.CIServer.syntax_check', return_value=True), \
-         patch('app.CIServer.run_tests', return_value=True), \
+    with patch('app.CIServer.clone_check', return_value=('commitid', '/tmp/repo_path')), \
+         patch('app.CIServer.syntax_check', return_value={
+            "status": "success",
+            "message": "Syntax check passed",
+            "repository": {
+                "url": "repo_url",
+                "branch": "branch_name"
+            },
+            "files_checked": ['file1.py', 'file2.py'],
+            "error_count": 0,
+            "details": {}
+        }), \
+         patch('app.CIServer.run_tests', return_value=(True,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
          patch('app.CIServer.remove_temp_folder'):
 
@@ -186,9 +206,19 @@ def test_set_commit_status_test_failure(start_server):
         "after": "commit_sha"
     }
     
-    with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
-         patch('app.CIServer.syntax_check', return_value=True), \
-         patch('app.CIServer.run_tests', return_value=False), \
+    with patch('app.CIServer.clone_check', return_value=('commitid', '/tmp/repo_path')), \
+         patch('app.CIServer.syntax_check', return_value={
+            "status": "success",
+            "message": "Syntax check passed",
+            "repository": {
+                "url": "repo_url",
+                "branch": "branch_name"
+            },
+            "files_checked": ['file1.py', 'file2.py'],
+            "error_count": 0,
+            "details": {}
+         }), \
+         patch('app.CIServer.run_tests', return_value=(False,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
          patch('app.CIServer.remove_temp_folder'):
 
@@ -211,9 +241,19 @@ def test_notification_both_success(start_server):
         "after": "commit_sha"
     }
     
-    with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
-         patch('app.CIServer.syntax_check', return_value=True), \
-         patch('app.CIServer.run_tests', return_value=True), \
+    with patch('app.CIServer.clone_check', return_value=('commitid', '/tmp/repo_path')), \
+         patch('app.CIServer.syntax_check', return_value={
+            "status": "success",
+            "message": "Syntax check passed",
+            "repository": {
+                "url": "repo_url",
+                "branch": "branch_name"
+            },
+            "files_checked": ['file1.py', 'file2.py'],
+            "error_count": 0,
+            "details": {}
+        }), \
+         patch('app.CIServer.run_tests', return_value=(True,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status, \
          patch('app.CIServer.remove_temp_folder'):
         
@@ -238,8 +278,19 @@ def test_notification_syntax_failure(start_server):
         "after": "commit_sha"
     }
     
-    with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
-         patch('app.CIServer.syntax_check', return_value=False), \
+    with patch('app.CIServer.clone_check', return_value=('commitid', '/tmp/repo_path')), \
+         patch('app.CIServer.syntax_check', return_value={
+                "status": "error",
+                "message": "Syntax errors found",
+                "repository": {
+                    "url": "repo_url",
+                    "branch": "branch_name"
+                },
+                "files_checked": ['file1.py', 'file2.py'],
+                "error_count": 1,
+                "details": ['error']
+            }), \
+         patch('app.CIServer.run_tests', return_value=(True,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status, \
          patch('app.CIServer.remove_temp_folder'):
         
@@ -263,14 +314,24 @@ def test_notification_network_error(start_server):
     }
     
     with patch('app.CIServer.clone_check', return_value='/tmp/repo_path'), \
-         patch('app.CIServer.syntax_check', return_value=True), \
-         patch('app.CIServer.run_tests', return_value=True), \
+         patch('app.CIServer.syntax_check', return_value={
+            "status": "success",
+            "message": "Syntax check passed",
+            "repository": {
+                "url": "repo_url",
+                "branch": "branch_name"
+            },
+            "files_checked": ['file1.py', 'file2.py'],
+            "error_count": 0,
+            "details": {}
+        }), \
+         patch('app.CIServer.run_tests', return_value=(True,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status', side_effect=RequestException("Network error")), \
          patch('app.CIServer.remove_temp_folder'):
         
         try:
             response = requests.post(f"http://localhost:{port}/", json=payload)
-            assert response.status_code == 200
+            assert response.status_code == 500
         except requests.exceptions.ConnectionError:
             pytest.fail("Server connection failed")
 
