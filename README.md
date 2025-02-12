@@ -119,6 +119,33 @@ docker run -e GITHUB_TOKEN={your_github_token_here} -p 8008:8008 {name of image}
 
 ## Statement of contributions
 
+### Felicia Murkes:
+- Setup HTTP server
+- Setup docker image
+- Bugfixes on all three core features
+- Connected all features
+- Made some tests for do_post, clonechecker and syntax check
+- Some fixes to broken tests
+- Added two get endpoints to view the log history
+
+### Eyüp Ahmet Başaran
+- Implemented core feature 1
+- Fixes related to tmp directory management
+- Notification tests
+
+### Bingjie Zhao
+- Implemented core feature three
+- Tests for notify() function
+- fixed bugs in CIServer related to commit status;
+
+### Ismail 
+- Implemeted database
+- Tests for syntax check
+
+### Melissa Saber
+- Implemented core feature 2
+- wrote documatation for functions
+
 ## How we used git
 
 ## Our way of working (SEMAT)
