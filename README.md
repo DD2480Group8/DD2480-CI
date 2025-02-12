@@ -1,5 +1,8 @@
 # DD2480-CI
 
+## Overview
+This project implements a basic Continuous Integration (CI) server that automates key development tasks. When a developer pushes code changes to a GitHub repository, GitHub sends a webhook notification to the CI server. The server retrieves repository details from the webhook payload, clones the repository, and checks out the updated branch. It then performs a syntax check using Pylint, followed by executing unit tests with pytest. Based on the test results, the CI server updates the commit status on GitHub and sends notifications about the build outcome via the configured method.
+
 ## Project Structure
 ```
 DD2480-CI/
