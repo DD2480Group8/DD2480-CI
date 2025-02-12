@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 import stat
 import errno
 import re
-from build_history import log_build, get_github_commit_url, create_database, get_logs, get_log
+from build_history import get_highest_log_id, log_build, get_github_commit_url, create_database, get_logs, get_log
 from queue import Queue
 import threading
 
@@ -37,13 +37,14 @@ def process_queue():
         
         payload, build_id = task
         try:
-            process_webhook_payload(payload)
+            log_id = get_highest_log_id() + 1
+            process_webhook_payload(payload, log_id)
         except Exception as e:
             print(f"Error processing task {build_id}: {str(e)}")
         finally:
             task_queue.task_done()
 
-def process_webhook_payload(payload):
+def process_webhook_payload(payload,log_id):
     try:
             token = os.getenv('GITHUB_TOKEN')
             repo_url = payload['repository']['clone_url']
@@ -62,7 +63,7 @@ def process_webhook_payload(payload):
             except Exception as clone_error:
                 print(f"Error: {str(clone_error)}")
                 try:
-                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
+                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], log_id)
                 except Exception as notify_error:
                     if "Network error" in str(notify_error):
                         print(f"Warning: Failed to send notification: {str(notify_error)}")
@@ -73,10 +74,10 @@ def process_webhook_payload(payload):
             try:
                 if syntaxcheck['status'] == "success":
                     print("Syntax Check Passed")
-                    ghSyntax.send_commit_status("success", "Syntax check passed", payload['after'], "1") 
+                    ghSyntax.send_commit_status("success", "Syntax check passed", payload['after'], log_id) 
                 else:
                     print("Syntax Check Failed")
-                    ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
+                    ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], log_id)
             except Exception as notify_error:
                 if "Network error" in str(notify_error):
                     print(f"Warning: Failed to send notification: {str(notify_error)}")
@@ -90,10 +91,10 @@ def process_webhook_payload(payload):
             try:
                 if test_results:
                     print("Test Passed")
-                    ghTest.send_commit_status("success", "Tests passed", payload['after'], "1") 
+                    ghTest.send_commit_status("success", "Tests passed", payload['after'], log_id) 
                 else:
                     print("Test Failed")
-                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
+                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], log_id)
             except Exception as notify_error:
                 if "Network error" in str(notify_error):
                     print(f"Warning: Failed to send notification: {str(notify_error)}")
