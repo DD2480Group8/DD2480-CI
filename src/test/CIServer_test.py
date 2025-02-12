@@ -50,6 +50,7 @@ def test_do_POST_success():
          }), \
             patch('app.CIServer.run_tests', return_value=(True, "Test logs here")), \
             patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
+            patch('app.CIServer.log_build'), \
             patch('app.CIServer.remove_temp_folder'):
 
         response = process_webhook_payload(payload, "1")
@@ -72,6 +73,7 @@ def test_do_POST_clone_check_failure():
     }
 
     with patch('app.CIServer.clone_check', side_effect=Exception("Clone failed")), \
+            patch('app.CIServer.log_build'), \
             patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status:
 
         response = process_webhook_payload(payload, "1")
@@ -173,6 +175,7 @@ def test_set_commit_status_success():
         }), \
          patch('app.CIServer.run_tests', return_value=(True,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
+         patch('app.CIServer.log_build'), \
          patch('app.CIServer.remove_temp_folder'):
 
         response = process_webhook_payload(payload, "1")
@@ -210,6 +213,7 @@ def test_set_commit_status_test_failure():
          }), \
          patch('app.CIServer.run_tests', return_value=(False,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
+         patch('app.CIServer.log_build'), \
          patch('app.CIServer.remove_temp_folder'):
 
         response = process_webhook_payload(payload, "1")
@@ -245,6 +249,7 @@ def test_notification_both_success():
         }), \
          patch('app.CIServer.run_tests', return_value=(True,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status, \
+         patch('app.CIServer.log_build'), \
          patch('app.CIServer.remove_temp_folder'):
         
         response = process_webhook_payload(payload, "1")
@@ -284,8 +289,9 @@ def test_notification_syntax_failure():
             }), \
          patch('app.CIServer.run_tests', return_value=(True,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status, \
+         patch('app.CIServer.log_build'), \
          patch('app.CIServer.remove_temp_folder'):
-        
+         
         response = process_webhook_payload(payload, "1")
         assert response == False
         
@@ -323,6 +329,7 @@ def test_notification_network_error():
         }), \
          patch('app.CIServer.run_tests', return_value=(True,"logs")), \
          patch('app.CIServer.GithubNotification.send_commit_status', side_effect=RequestException("Network error")), \
+         patch('app.CIServer.log_build'), \
          patch('app.CIServer.remove_temp_folder'):
         
         try:
@@ -345,6 +352,7 @@ def test_notification_invalid_repo():
     }
     
     with patch('app.CIServer.clone_check', side_effect=Exception("Invalid repository")), \
+         patch('app.CIServer.log_build'), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status:
         
         response = process_webhook_payload(payload, "1")
