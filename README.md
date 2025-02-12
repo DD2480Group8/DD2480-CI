@@ -1,6 +1,22 @@
 # DD2480-CI
 ## Overview
 ## Project Structure
+```
+DD2480-CI/
+├── src/
+│   ├── app/                    # Main application code
+│   │   ├── CIServer.py        # Core CI server implementation
+│   │   ├── clone.py           # Repository cloning functionality
+│   │   ├── notify.py          # GitHub status notification system
+│   │   ├── runTests.py        # Test execution handler
+│   │   ├── syntax_check.py    # Python syntax validation
+│   │   └── main.py           # Server entry point
+│   └── test/                  # Test suite
+│       └── CIServer_test.py   # Comprehensive tests for CI server
+├── .github/                   # GitHub specific configurations
+│   └── workflows/             # GitHub Actions workflows
+└── venv/                     # Python virtual environment
+```
 ## Key Components
 
 **CI Server (CIServer.py)**
