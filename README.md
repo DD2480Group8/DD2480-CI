@@ -17,6 +17,10 @@ DD2480-CI/
 │   └── workflows/             # GitHub Actions workflows
 └── venv/                     # Python virtual environment
 ```
+## Project Structure Diagram
+Here is a diagram that illustrates the project structure:
+![Project Structure](structure.png)
+
 ## Key Components
 
 **CI Server (CIServer.py)**
@@ -93,4 +97,5 @@ pytest src/test/CIServer_test.py
 ## Statement of contributions
 
 ## How we used git
+
 ## Our way of working (SEMAT)
