@@ -14,20 +14,48 @@ from runTests import run_tests
 from dotenv import load_dotenv
 import stat
 import errno
+import re
+from build_history import log_build, get_github_commit_url, create_database, get_logs, get_log
 
+create_database()
 # Load environment variables from .env file
 load_dotenv()
 
 
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        """Handles GET requests by responding with a simple message."""
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
+        # Parse the requested path
+        path = self.path
+        field_names = ["id", "commit_id", "build_date", "build_logs", "github_commit_url"]
+
         
-        message = "Hello World!"
-        self.wfile.write(message.encode())
+        if path == "/":
+            # Handle the root path
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+
+            self.end_headers()
+            message = get_logs()
+            data = [dict(zip(field_names, item)) for item in message]
+            self.wfile.write(json.dumps(data).encode())
+        
+        elif re.match(r"^/\d+$", path):  # Check if the path matches "/{id}" where id is a number
+            # Extract the ID from the path
+            id_value = path[1:]  # Remove the leading '/'
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            message = get_log(id_value)
+            data = dict(zip(field_names, message))
+            self.wfile.write(json.dumps(data).encode())
+        
+        else:
+            # Handle unknown paths
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            message = "404 Not Found"
+            self.wfile.write(message.encode())
 
     def do_POST(self):
         """
@@ -50,14 +78,15 @@ class SimpleHandler(BaseHTTPRequestHandler):
             ghSyntax = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/syntaxcheck")
             ghTest = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/tests")
             
-            print(payload['ref'].split('/')[-2].lower())
+            
             if payload['ref'].split('/')[-2].lower() == 'issue':
                 branch = payload['ref'].split('/')[-2] + '/' + payload['ref'].split('/')[-1]
             else:
                 branch = payload['ref'].split('/')[-1]  # refs/heads/branch-name -> branch-name
             
+            
             try:
-                result = clone_check(repo_url, branch)
+                commit_id, result = clone_check(repo_url, branch)
             except Exception as clone_error:
                 print(f"Error: {str(clone_error)}")
                 try:
@@ -70,23 +99,22 @@ class SimpleHandler(BaseHTTPRequestHandler):
             syntaxcheck = syntax_check(result)
             
             try:
-                if syntaxcheck:
+                if syntaxcheck['status'] == "success":
                     print("Syntax Check Passed")
                     ghSyntax.send_commit_status("success", "Syntax check passed", payload['after'], "1") 
                 else:
                     print("Syntax Check Failed")
                     ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
-                    raise Exception("Syntax check failed")
             except Exception as notify_error:
                 if "Network error" in str(notify_error):
                     print(f"Warning: Failed to send notification: {str(notify_error)}")
                 else:
                     raise notify_error
 
-            if not syntaxcheck:
+            if syntaxcheck['status'] == "error":
                 raise Exception("Syntax check failed")
 
-            test_results = run_tests(result)
+            test_results, test_logs = run_tests(result)
             try:
                 if test_results:
                     print("Test Passed")
@@ -103,6 +131,15 @@ class SimpleHandler(BaseHTTPRequestHandler):
             if not test_results:
                 raise Exception("Tests failed")
 
+
+            if not commit_id:   
+                raise Exception("Error cloning repository.")
+            
+            if test_logs != "Test logs here": 
+                logs = f"Syntax Check Logs: {syntaxcheck['details']} \nTest Logs: {test_logs}"
+                log_build(commit_id, logs)                       
+                github_commit_url = get_github_commit_url(commit_id)
+                
             remove_temp_folder(result)
             
             self.send_response(200)
@@ -114,6 +151,11 @@ class SimpleHandler(BaseHTTPRequestHandler):
             print(f"Error: {str(e)}")
             try:
                 if "Syntax check failed" in str(e):
+                    self.send_response(500)
+                    self.send_header('Content-type', 'application/json')
+                    self.end_headers()
+                    error_response = {'status': 'error', 'message': str(e)}
+                elif "Tests failed" in str(e):
                     self.send_response(500)
                     self.send_header('Content-type', 'application/json')
                     self.end_headers()
@@ -166,4 +208,3 @@ def run_server(port):
     server = HTTPServer(('', port), SimpleHandler)
     print(f'Server running on port {port}...')
     return server
-

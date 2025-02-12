@@ -50,8 +50,8 @@ def clone_check(repo_url, branch):
         
         print(f"Cloning {repo_url} branch {branch} to {temp_dir}")
         repo = Repo.clone_from(repo_url, temp_dir, branch=branch)
-      
-        return temp_dir
+        commit_id = repo.head.commit.hexsha      
+        return commit_id, temp_dir
         
     except Exception as e:
         if 'temp_dir' in locals() and os.path.exists(temp_dir):
