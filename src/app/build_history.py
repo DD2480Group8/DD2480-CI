@@ -1,12 +1,12 @@
 import sqlite3
 from datetime import datetime
 
-def create_database(table_name='builds'):
+def create_database(table_name='builds', connection='build_history.db'):
     """Create the database and the specified table if it doesn't exist, and add missing columns."""
     print(f"Creating database and table '{table_name}' if not exists.")  
     try:
         print("Connecting to the database...")
-        conn = sqlite3.connect('build_history.db')  
+        conn = sqlite3.connect(connection)  
         cursor = conn.cursor()
         
         # Create the table if it doesn't exist
@@ -62,13 +62,13 @@ def log_build(commit_id, build_logs=None, table_name='builds'):
     except Exception as e:
         print(f"Error logging build: {e}")
 
-def get_logs():
+def get_logs(table_name='builds'):
     """Retrieve all build logs from the database."""
     try:
         print("Retrieving build logs from database.")
         conn = sqlite3.connect('build_history.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM builds")
+        cursor.execute("SELECT * FROM ?", (table_name,))
         logs = cursor.fetchall()
         conn.close()
         print(f"Logs retrieved: {logs}")
@@ -77,13 +77,13 @@ def get_logs():
         print(f"Error retrieving logs: {e}")
         return []
 
-def get_log(id):
+def get_log(id, table_name='builds'):
     """Retrieve a specific build log from the database."""
     try:
         print(f"Retrieving build log with id: {id}")
         conn = sqlite3.connect('build_history.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM builds WHERE id=?", (id,))
+        cursor.execute(f"SELECT * FROM {table_name} WHERE id=?", (id,))
         log = cursor.fetchone()
         conn.close()
         print(f"Log retrieved: {log}")
@@ -91,3 +91,5 @@ def get_log(id):
     except Exception as e:
         print(f"Error retrieving log: {e}")
         return None
+    
+    
