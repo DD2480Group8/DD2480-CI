@@ -76,7 +76,7 @@ def test_do_POST_clone_check_failure():
 
         response = process_webhook_payload(payload, "1")
         assert response == False
-        mock_send_commit_status.assert_called_with("failure", "Tests failed", "commit_sha", "1")
+        mock_send_commit_status.assert_called_with("failure", "Clone failed", "commit_sha", "1")
 
 
 
@@ -251,7 +251,9 @@ def test_notification_both_success():
         assert response == True
         
         calls = mock_send_status.call_args_list
-        assert len(calls) == 2
+        assert len(calls) == 4
+        assert any(call[0][0] == "pending" and "syntax" in call[0][1].lower() for call in calls)
+        assert any(call[0][0] == "pending" and "test" in call[0][1].lower() for call in calls)
         assert any(call[0][0] == "success" and "syntax" in call[0][1].lower() for call in calls)
         assert any(call[0][0] == "success" and "test" in call[0][1].lower() for call in calls)
 
@@ -288,9 +290,11 @@ def test_notification_syntax_failure():
         assert response == False
         
         calls = mock_send_status.call_args_list
-        assert len(calls) == 1
+        assert len(calls) == 4
+        assert any(call[0][0] == "pending" and "syntax" in call[0][1].lower() for call in calls)
+        assert any(call[0][0] == "pending" and "test" in call[0][1].lower() for call in calls)
         assert any(call[0][0] == "failure" and "syntax check failed" in call[0][1].lower() for call in calls)
-       
+        assert any(call[0][0] == "error" and "tests cannot be run due to failing the syntax check" in call[0][1].lower() for call in calls)
 
 def test_notification_network_error():
     payload = {
@@ -345,4 +349,4 @@ def test_notification_invalid_repo():
         
         response = process_webhook_payload(payload, "1")
         assert response == False
-        mock_send_status.assert_called_with("failure", "Tests failed", "commit_sha", "1")
+        mock_send_status.assert_called_with("failure", "Clone failed", "commit_sha", "1")
