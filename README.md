@@ -1,5 +1,5 @@
 # DD2480-CI
-## Overview
+
 ## Project Structure
 ```
 DD2480-CI/
@@ -54,8 +54,7 @@ Here is a diagram that illustrates the project structure:
 - Tests for success and failure scenarios of the CI pipeline
 - Network error handling and edge case coverage
 
-## Setup
-
+## Setup - Not using docker
 Install Python 3.13.1
 
 1. When you have installed python, Use the following command to create a virtual environment:
@@ -75,17 +74,32 @@ python3 -m venv venv
     To enter virtual environment (For Windows), run:
 
     ```bash
-    ./venv/bin/activate
+    .\venv\Scripts\activate
     ```
+    
+    In the virutal environment run the following command to install all necessary dependencies_
+
+    ```pip install -r requirements.txt```
 
     - Use command ```deactivate``` to close environment
+3. Create a Github personal access token
+4. Add .env file to Root directory of the project
+    - Add the following line to the .env file:
+
+    ```GITHUB_TOKEN=your personal access token here```
+## Expose your local host
+1. Open ngrok tunnel
+    ```ngrok http http://localhost:8008```
+    - OBS! port needs to be 8008
+2. Add the ngrok URL to a github webhook that can recieve push events
+
 
 ## Running the program
 
 1. To run server, use following command:
 
 ```bash
-python src/app/CIServer.py
+python src/app/main.py
 ```
 
 2. To run tests run the following command:
@@ -93,6 +107,15 @@ python src/app/CIServer.py
 pytest src/test/CIServer_test.py
 ```
 
+## Run Server with docker image
+### Build the container
+```bash
+docker build . -t {nameofimage}
+```
+### Running server
+```bash
+docker run -e GITHUB_TOKEN={your_github_token_here} -p 8008:8008 {name of image}
+```
 
 ## Statement of contributions
 
