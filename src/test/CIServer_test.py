@@ -52,7 +52,7 @@ def test_do_POST_success():
             patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
             patch('app.CIServer.remove_temp_folder'):
 
-        response = process_webhook_payload(payload)
+        response = process_webhook_payload(payload, "1")
         assert response == True
         
         mock_send_commit_status.assert_called_with("success", "Tests passed", "commit_sha", "1")
@@ -74,7 +74,7 @@ def test_do_POST_clone_check_failure():
     with patch('app.CIServer.clone_check', side_effect=Exception("Clone failed")), \
             patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status:
 
-        response = process_webhook_payload(payload)
+        response = process_webhook_payload(payload, "1")
         assert response == False
         mock_send_commit_status.assert_called_with("failure", "Tests failed", "commit_sha", "1")
 
@@ -175,7 +175,7 @@ def test_set_commit_status_success():
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
          patch('app.CIServer.remove_temp_folder'):
 
-        response = process_webhook_payload(payload)
+        response = process_webhook_payload(payload, "1")
         assert response == True
         
         # Verify if the send_commit_status function was called with 'success' status
@@ -212,7 +212,7 @@ def test_set_commit_status_test_failure():
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_commit_status, \
          patch('app.CIServer.remove_temp_folder'):
 
-        response = process_webhook_payload(payload)
+        response = process_webhook_payload(payload, "1")
         assert response == False
         
         # Verify if the send_commit_status function was called with 'failure' status due to test failure
@@ -247,7 +247,7 @@ def test_notification_both_success():
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status, \
          patch('app.CIServer.remove_temp_folder'):
         
-        response = process_webhook_payload(payload)
+        response = process_webhook_payload(payload, "1")
         assert response == True
         
         calls = mock_send_status.call_args_list
@@ -284,7 +284,7 @@ def test_notification_syntax_failure():
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status, \
          patch('app.CIServer.remove_temp_folder'):
         
-        response = process_webhook_payload(payload)
+        response = process_webhook_payload(payload, "1")
         assert response == False
         
         calls = mock_send_status.call_args_list
@@ -322,7 +322,7 @@ def test_notification_network_error():
          patch('app.CIServer.remove_temp_folder'):
         
         try:
-            response = process_webhook_payload(payload)
+            response = process_webhook_payload(payload, "1")
             assert response == False
         except requests.exceptions.ConnectionError:
             pytest.fail("Server connection failed")
@@ -343,6 +343,6 @@ def test_notification_invalid_repo():
     with patch('app.CIServer.clone_check', side_effect=Exception("Invalid repository")), \
          patch('app.CIServer.GithubNotification.send_commit_status') as mock_send_status:
         
-        response = process_webhook_payload(payload)
+        response = process_webhook_payload(payload, "1")
         assert response == False
         mock_send_status.assert_called_with("failure", "Tests failed", "commit_sha", "1")
