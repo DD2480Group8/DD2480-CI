@@ -14,22 +14,48 @@ from runTests import run_tests
 from dotenv import load_dotenv
 import stat
 import errno
-from build_history import log_build, get_build_url, create_database
+import re
+from build_history import log_build, get_build_url, create_database, get_logs, get_log
 
 create_database()
-
 # Load environment variables from .env file
 load_dotenv()
 
 
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
+        # Parse the requested path
+        path = self.path
+        field_names = ["id", "commit_id", "build_date", "build_logs", "build_url"]
+
         
-        message = "Hello World!"
-        self.wfile.write(message.encode())
+        if path == "/":
+            # Handle the root path
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+
+            self.end_headers()
+            message = get_logs()
+            data = [dict(zip(field_names, item)) for item in message]
+            self.wfile.write(json.dumps(data).encode())
+        
+        elif re.match(r"^/\d+$", path):  # Check if the path matches "/{id}" where id is a number
+            # Extract the ID from the path
+            id_value = path[1:]  # Remove the leading '/'
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            message = get_log(id_value)
+            data = dict(zip(field_names, message))
+            self.wfile.write(json.dumps(data).encode())
+        
+        else:
+            # Handle unknown paths
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            message = "404 Not Found"
+            self.wfile.write(message.encode())
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
