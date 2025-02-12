@@ -91,5 +91,21 @@ def get_log(id, table_name='builds'):
     except Exception as e:
         print(f"Error retrieving log: {e}")
         return None
-    
+
+def get_highest_log_id(table_name='builds'):
+    """Retrieve the highest build log id from the database."""
+    try:
+        print("Retrieving highest build log id from database.")
+        conn = sqlite3.connect('build_history.db')
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT MAX(id) FROM {table_name}")
+        max_id = cursor.fetchone()[0]
+        conn.close()
+        print(f"Highest log id retrieved: {max_id}")
+        if max_id is None:
+            return 1
+        return max_id
+    except Exception as e:
+        print(f"Error retrieving highest log id: {e}")
+        return None
     
