@@ -16,7 +16,7 @@ def create_database(table_name='builds'):
                 commit_id TEXT,
                 build_date TEXT,
                 build_logs TEXT,
-                build_url TEXT  
+                github_commit_url TEXT  
             )
         ''')
         
@@ -40,7 +40,7 @@ def create_database(table_name='builds'):
     except Exception as e:
         print(f"Error during database creation: {e}")
 
-def get_build_url(commit_id):
+def get_github_commit_url(commit_id):
     """Generate a unique URL for a specific build."""
     return f"https://github.com/DD2480Group8/DD2480-CI/commit/{commit_id}"
 
@@ -51,14 +51,14 @@ def log_build(commit_id, build_logs=None, table_name='builds'):
         conn = sqlite3.connect('build_history.db')
         cursor = conn.cursor()
         build_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S') 
-        build_url = get_build_url(commit_id)  
+        github_commit_url = get_github_commit_url(commit_id)  
         cursor.execute(f'''
-            INSERT INTO {table_name} (commit_id, build_date, build_logs, build_url)
+            INSERT INTO {table_name} (commit_id, build_date, build_logs, github_commit_url)
             VALUES (?, ?, ?, ?)
-        ''', (commit_id, build_date, build_logs if build_logs else 'No logs available', build_url))
+        ''', (commit_id, build_date, build_logs if build_logs else 'No logs available', github_commit_url))
         conn.commit()
         conn.close()
-        print(f"Build logged: {commit_id} on {build_date}, \nLogs: {build_logs} \nURL: {build_url}")
+        print(f"Build logged: {commit_id} on {build_date}, \nLogs: {build_logs} \nURL: {github_commit_url}")
     except Exception as e:
         print(f"Error logging build: {e}")
 

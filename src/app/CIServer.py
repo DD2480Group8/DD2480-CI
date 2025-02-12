@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 import stat
 import errno
 import re
-from build_history import log_build, get_build_url, create_database, get_logs, get_log
+from build_history import log_build, get_github_commit_url, create_database, get_logs, get_log
 
 create_database()
 # Load environment variables from .env file
@@ -26,7 +26,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Parse the requested path
         path = self.path
-        field_names = ["id", "commit_id", "build_date", "build_logs", "build_url"]
+        field_names = ["id", "commit_id", "build_date", "build_logs", "github_commit_url"]
 
         
         if path == "/":
@@ -94,7 +94,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             
             if test_logs != "Test logs here": 
                 log_build(commit_id, test_logs)                       
-                build_url = get_build_url(commit_id)
+                github_commit_url = get_github_commit_url(commit_id)
                 
             remove_temp_folder(result)
             token = os.getenv('GITHUB_TOKEN')
