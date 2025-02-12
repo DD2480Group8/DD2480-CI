@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 import stat
 import errno
 import re
-from build_history import log_build, get_github_commit_url, create_database, get_logs, get_log
+from build_history import get_highest_log_id, log_build, get_github_commit_url, create_database, get_logs, get_log
 from queue import Queue
 import threading
 
@@ -37,16 +37,18 @@ def process_queue():
         
         payload, build_id = task
         try:
-            process_webhook_payload(payload)
+            log_id = get_highest_log_id() + 1
+            process_webhook_payload(payload, log_id)
         except Exception as e:
             print(f"Error processing task {build_id}: {str(e)}")
         finally:
             task_queue.task_done()
 
-def process_webhook_payload(payload):
+def process_webhook_payload(payload,log_id):
     try:
             token = os.getenv('GITHUB_TOKEN')
             repo_url = payload['repository']['clone_url']
+            commit_id = payload['after']
             ghSyntax = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/syntaxcheck")
             ghTest = GithubNotification(payload['organization']['login'], payload['repository']['name'], token, "http://localhost:8008", "ci/tests")
             
@@ -62,7 +64,7 @@ def process_webhook_payload(payload):
             except Exception as clone_error:
                 print(f"Error: {str(clone_error)}")
                 try:
-                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
+                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], log_id)
                 except Exception as notify_error:
                     if "Network error" in str(notify_error):
                         print(f"Warning: Failed to send notification: {str(notify_error)}")
@@ -73,10 +75,10 @@ def process_webhook_payload(payload):
             try:
                 if syntaxcheck['status'] == "success":
                     print("Syntax Check Passed")
-                    ghSyntax.send_commit_status("success", "Syntax check passed", payload['after'], "1") 
+                    ghSyntax.send_commit_status("success", "Syntax check passed", payload['after'], log_id) 
                 else:
                     print("Syntax Check Failed")
-                    ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], "1")
+                    ghSyntax.send_commit_status("failure", "Syntax check failed", payload['after'], log_id)
             except Exception as notify_error:
                 if "Network error" in str(notify_error):
                     print(f"Warning: Failed to send notification: {str(notify_error)}")
@@ -90,10 +92,10 @@ def process_webhook_payload(payload):
             try:
                 if test_results:
                     print("Test Passed")
-                    ghTest.send_commit_status("success", "Tests passed", payload['after'], "1") 
+                    ghTest.send_commit_status("success", "Tests passed", payload['after'], log_id) 
                 else:
                     print("Test Failed")
-                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], "1")
+                    ghTest.send_commit_status("failure", "Tests failed", payload['after'], log_id)
             except Exception as notify_error:
                 if "Network error" in str(notify_error):
                     print(f"Warning: Failed to send notification: {str(notify_error)}")
@@ -112,13 +114,38 @@ def process_webhook_payload(payload):
                 log_build(commit_id, logs)                       
                 github_commit_url = get_github_commit_url(commit_id)
                 
-            remove_temp_folder(result)
             
             return True
             
     except Exception as e:
-            print(f"Error: {str(e)}")
-            return False
+        return False
+    finally:
+        log_parts = []
+
+        # Add Log ID if it exists
+        if 'log_id' in locals() or 'log_id' in globals():
+            log_parts.append(f"Log ID: {log_id}")
+
+        # Add Commit ID if it exists
+        if 'commit_id' in locals() or 'commit_id' in globals():
+            log_parts.append(f"Commit ID: {commit_id}")
+
+        # Add Syntax Check if both json and syntaxcheck exist
+        if ('json' in locals() or 'json' in globals()) and ('syntaxcheck' in locals() or 'syntaxcheck' in globals()):
+            log_parts.append("\nSyntax Check:\n=================")
+            log_parts.append(json.dumps(syntaxcheck, indent=4))
+            log_parts.append("=================")
+
+        # Add Test Results if test_logs exists
+        if 'test_logs' in locals() or 'test_logs' in globals():
+            log_parts.append("\nTest Results:\n=================")
+            log_parts.append(test_logs)
+            log_parts.append("=================")
+        
+        log_build(commit_id, "".join(log_parts))  # Log the build results                     
+
+        if 'result' in locals() or 'result' in globals():
+            remove_temp_folder(result)
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Parse the requested path

@@ -68,7 +68,7 @@ def get_logs(table_name='builds'):
         print("Retrieving build logs from database.")
         conn = sqlite3.connect('build_history.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM ?", (table_name,))
+        cursor.execute(f"SELECT * FROM {table_name}")
         logs = cursor.fetchall()
         conn.close()
         print(f"Logs retrieved: {logs}")
