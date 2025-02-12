@@ -20,9 +20,6 @@ DD2480-CI/
 │   └── workflows/             # GitHub Actions workflows
 └── venv/                     # Python virtual environment
 ```
-## Project Structure Diagram
-Here is a diagram that illustrates the project structure:
-![Project Structure](structure.png)
 
 ## Key Components
 
