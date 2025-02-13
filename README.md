@@ -55,7 +55,7 @@ DD2480-CI/
 
 
 ## Setup - Not using docker
-Install Python 3.13.1
+Install Python 3.13.1 and pip 24.3.1
 
 1. When you have installed python, Use the following command to create a virtual environment:
 
