@@ -223,6 +223,13 @@ def test_set_commit_status_test_failure():
         mock_send_commit_status.assert_called_with("failure", "Tests failed", "commit_sha", "1")
 
 def test_notification_both_success():
+    """
+    Test the notification process when both syntax check and tests are successful.
+    This test simulates a webhook payload and verifies that the CIServer correctly
+    processes the payload, performs the necessary checks, and sends the appropriate
+    notifications to GitHub.
+    
+    """
     payload = {
         "repository": {
             "clone_url": "https://github.com/DD2480Group8/DD2480-CI.git",
@@ -263,6 +270,12 @@ def test_notification_both_success():
         assert any(call[0][0] == "success" and "test" in call[0][1].lower() for call in calls)
 
 def test_notification_syntax_failure():
+    """
+    Test the notification process when there is a syntax failure in the code.
+    This test simulates a webhook payload and mocks the methods of the CIServer class to 
+    verify that the correct notifications are sent when a syntax error is detected.
+   
+    """
     payload = {
         "repository": {
             "clone_url": "https://github.com/DD2480Group8/DD2480-CI.git",
@@ -303,6 +316,12 @@ def test_notification_syntax_failure():
         assert any(call[0][0] == "error" and "tests cannot be run due to failing the syntax check" in call[0][1].lower() for call in calls)
 
 def test_notification_network_error():
+    """
+    Test case for handling network error during notification sending.
+    This test simulates a scenario where a network error occurs while sending a commit status notification to GitHub.
+    It patches several methods of the CIServer class to control their behavior and ensure the test focuses on the network error handling.
+
+    """
     payload = {
         "repository": {
             "clone_url": "https://github.com/DD2480Group8/DD2480-CI.git",
@@ -339,6 +358,10 @@ def test_notification_network_error():
             pytest.fail("Server connection failed")
 
 def test_notification_invalid_repo():
+    """
+    Test case for handling an invalid repo.
+    This test simulates a scenario where an invalid repository is provided in the webhook payload.
+    """
     payload = {
         "repository": {
             "clone_url": "https://github.com/invalid/repo.git",
