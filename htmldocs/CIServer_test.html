@@ -17,13 +17,12 @@
     
 <tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><table><tr><td class="multicolumn"><a href="json.html">json</a><br>
-<a href="pydoc.html">pydoc</a><br>
-</td><td class="multicolumn"><a href="pytest.html">pytest</a><br>
-<a href="requests.html">requests</a><br>
-</td><td class="multicolumn"><a href="sys.html">sys</a><br>
-<a href="threading.html">threading</a><br>
-</td><td class="multicolumn"><a href="time.html">time</a><br>
-</td></tr></table></td></tr></table><p>
+<a href="pytest.html">pytest</a><br>
+</td><td class="multicolumn"><a href="requests.html">requests</a><br>
+<a href="sys.html">sys</a><br>
+</td><td class="multicolumn"><a href="threading.html">threading</a><br>
+<a href="time.html">time</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
 <table class="section">
 <tr class="decor functions-decor heading-text">
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
@@ -31,10 +30,18 @@
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
 <td class="singlecolumn"><dl><dt><a name="-test_do_POST_clone_check_failure"><strong>test_do_POST_clone_check_failure</strong></a>()</dt><dd><span class="code">Test&nbsp;the&nbsp;do_POST&nbsp;method&nbsp;for&nbsp;a&nbsp;failure&nbsp;flow&nbsp;in&nbsp;clone_check</span></dd></dl>
  <dl><dt><a name="-test_do_POST_success"><strong>test_do_POST_success</strong></a>()</dt><dd><span class="code">Test&nbsp;the&nbsp;do_POST&nbsp;method&nbsp;for&nbsp;a&nbsp;successful&nbsp;flow</span></dd></dl>
- <dl><dt><a name="-test_notification_both_success"><strong>test_notification_both_success</strong></a>()</dt></dl>
- <dl><dt><a name="-test_notification_invalid_repo"><strong>test_notification_invalid_repo</strong></a>()</dt></dl>
- <dl><dt><a name="-test_notification_network_error"><strong>test_notification_network_error</strong></a>()</dt></dl>
- <dl><dt><a name="-test_notification_syntax_failure"><strong>test_notification_syntax_failure</strong></a>()</dt></dl>
+ <dl><dt><a name="-test_notification_both_success"><strong>test_notification_both_success</strong></a>()</dt><dd><span class="code">Test&nbsp;the&nbsp;notification&nbsp;process&nbsp;when&nbsp;both&nbsp;syntax&nbsp;check&nbsp;and&nbsp;tests&nbsp;are&nbsp;successful.<br>
+This&nbsp;test&nbsp;simulates&nbsp;a&nbsp;webhook&nbsp;payload&nbsp;and&nbsp;verifies&nbsp;that&nbsp;the&nbsp;CIServer&nbsp;correctly<br>
+processes&nbsp;the&nbsp;payload,&nbsp;performs&nbsp;the&nbsp;necessary&nbsp;checks,&nbsp;and&nbsp;sends&nbsp;the&nbsp;appropriate<br>
+notifications&nbsp;to&nbsp;GitHub.</span></dd></dl>
+ <dl><dt><a name="-test_notification_invalid_repo"><strong>test_notification_invalid_repo</strong></a>()</dt><dd><span class="code">Test&nbsp;case&nbsp;for&nbsp;handling&nbsp;an&nbsp;invalid&nbsp;repo.<br>
+This&nbsp;test&nbsp;simulates&nbsp;a&nbsp;scenario&nbsp;where&nbsp;an&nbsp;invalid&nbsp;repository&nbsp;is&nbsp;provided&nbsp;in&nbsp;the&nbsp;webhook&nbsp;payload.</span></dd></dl>
+ <dl><dt><a name="-test_notification_network_error"><strong>test_notification_network_error</strong></a>()</dt><dd><span class="code">Test&nbsp;case&nbsp;for&nbsp;handling&nbsp;network&nbsp;error&nbsp;during&nbsp;notification&nbsp;sending.<br>
+This&nbsp;test&nbsp;simulates&nbsp;a&nbsp;scenario&nbsp;where&nbsp;a&nbsp;network&nbsp;error&nbsp;occurs&nbsp;while&nbsp;sending&nbsp;a&nbsp;commit&nbsp;status&nbsp;notification&nbsp;to&nbsp;GitHub.<br>
+It&nbsp;patches&nbsp;several&nbsp;methods&nbsp;of&nbsp;the&nbsp;CIServer&nbsp;class&nbsp;to&nbsp;control&nbsp;their&nbsp;behavior&nbsp;and&nbsp;ensure&nbsp;the&nbsp;test&nbsp;focuses&nbsp;on&nbsp;the&nbsp;network&nbsp;error&nbsp;handling.</span></dd></dl>
+ <dl><dt><a name="-test_notification_syntax_failure"><strong>test_notification_syntax_failure</strong></a>()</dt><dd><span class="code">Test&nbsp;the&nbsp;notification&nbsp;process&nbsp;when&nbsp;there&nbsp;is&nbsp;a&nbsp;syntax&nbsp;failure&nbsp;in&nbsp;the&nbsp;code.<br>
+This&nbsp;test&nbsp;simulates&nbsp;a&nbsp;webhook&nbsp;payload&nbsp;and&nbsp;mocks&nbsp;the&nbsp;methods&nbsp;of&nbsp;the&nbsp;CIServer&nbsp;class&nbsp;to&nbsp;<br>
+verify&nbsp;that&nbsp;the&nbsp;correct&nbsp;notifications&nbsp;are&nbsp;sent&nbsp;when&nbsp;a&nbsp;syntax&nbsp;error&nbsp;is&nbsp;detected.</span></dd></dl>
  <dl><dt><a name="-test_set_commit_status_success"><strong>test_set_commit_status_success</strong></a>()</dt><dd><span class="code">Test&nbsp;setting&nbsp;commit&nbsp;status&nbsp;to&nbsp;'success'&nbsp;after&nbsp;passing&nbsp;syntax&nbsp;and&nbsp;tests</span></dd></dl>
  <dl><dt><a name="-test_set_commit_status_test_failure"><strong>test_set_commit_status_test_failure</strong></a>()</dt><dd><span class="code">Test&nbsp;setting&nbsp;commit&nbsp;status&nbsp;to&nbsp;'failure'&nbsp;after&nbsp;failing&nbsp;tests</span></dd></dl>
  <dl><dt><a name="-test_syntax_check_at_least_one_error_found"><strong>test_syntax_check_at_least_one_error_found</strong></a>()</dt><dd><span class="code">Test&nbsp;the&nbsp;syntax_check&nbsp;function&nbsp;for&nbsp;the&nbsp;case&nbsp;when&nbsp;at&nbsp;least&nbsp;one&nbsp;error&nbsp;is&nbsp;found</span></dd></dl>
