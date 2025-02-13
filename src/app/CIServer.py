@@ -163,6 +163,9 @@ def process_webhook_payload(payload,log_id):
             remove_temp_folder(result)
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+        """
+        Handle GET requests to the server for getting build logs
+        """
         # Parse the requested path
         path = self.path
         field_names = ["id", "commit_id", "build_date", "build_logs", "github_commit_url"]
