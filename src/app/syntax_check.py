@@ -73,31 +73,12 @@ def syntax_check(directory):
     except Exception as e:
         return {
             "status": "error",
-            "message": "Syntax errors found",
+            "message": f"Error during syntax check: {str(e)}",
             "repository": {
                 "url": "repo_url",
                 "branch": "branch_name"
             },
             "files_checked": python_files,
-            "error_count": 2,
-            "details": {
-                "file1.py": [
-                    {
-                        "line": 10,
-                        "column": 5,
-                        "type": "error",
-                        "symbol": "syntax-error",
-                        "message": "invalid syntax"
-                    }
-                ],
-                "file2.py": [
-                    {
-                        "line": 20,
-                        "column": 1,
-                        "type": "error",
-                        "symbol": "undefined-variable",
-                        "message": "undefined variable 'foo'"
-                    }
-                ]
-            }
+            "error_count": -1,
+            "details": {"error": str(e)}
         }
