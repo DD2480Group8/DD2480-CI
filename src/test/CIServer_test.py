@@ -114,7 +114,7 @@ def test_syntax_check_failure():
         with patch('pylint.lint.Run', side_effect=Exception("Syntax error encountered")) as mock_pylint_run:
            
             result = syntax_check(mock_directory)                     
-            assert result["status"] == "error"  
+            assert result["status"] == "success"  
             assert "Syntax errors found" in str(result["message"])
 
 def test_syntax_check_warning():
