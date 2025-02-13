@@ -1,0 +1,22 @@
+Help on module test_build_history:
+
+NAME
+    test_build_history
+
+FUNCTIONS
+    setup_db()
+        Setup the test database and create a 'test_builds' table.
+
+    test_create_database(setup_db)
+        Test if the 'test_builds' table is created in the database.
+
+    test_get_github_commit_url()
+        Test if the build URL is generated correctly.
+
+    test_log_build(setup_db)
+        Test if a build is logged correctly into 'test_builds'.
+
+FILE
+    /Users/melissasaber/Desktop/DD2480-CI/src/test/test_build_history.py
+
+

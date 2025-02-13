@@ -1,0 +1,49 @@
+Creating database and table 'builds' if not exists.
+Connecting to the database...
+Tables after creation: [('builds',)]
+Database created and table 'builds' initialized successfully.
+Help on module CIServer_test:
+
+NAME
+    CIServer_test
+
+FUNCTIONS
+    test_do_POST_clone_check_failure()
+        Test the do_POST method for a failure flow in clone_check
+
+    test_do_POST_success()
+        Test the do_POST method for a successful flow
+
+    test_notification_both_success()
+
+    test_notification_invalid_repo()
+
+    test_notification_network_error()
+
+    test_notification_syntax_failure()
+
+    test_set_commit_status_success()
+        Test setting commit status to 'success' after passing syntax and tests
+
+    test_set_commit_status_test_failure()
+        Test setting commit status to 'failure' after failing tests
+
+    test_syntax_check_at_least_one_error_found()
+        Test the syntax_check function for the case when at least one error is found
+
+    test_syntax_check_failure()
+        Test the syntax_check function for a failed syntax check
+
+    test_syntax_check_success()
+        Test the syntax_check function for a successful syntax check
+
+    test_syntax_check_warning()
+        Test the syntax_check function for the warning case when no Python files are found
+
+DATA
+    port = 8009
+
+FILE
+    /Users/melissasaber/Desktop/DD2480-CI/src/test/CIServer_test.py
+
+

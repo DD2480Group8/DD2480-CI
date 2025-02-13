@@ -1,0 +1,28 @@
+Help on module build_history:
+
+NAME
+    build_history
+
+FUNCTIONS
+    create_database(table_name='builds', connection='build_history.db')
+        Create the database and the specified table if it doesn't exist, and add missing columns.
+
+    get_github_commit_url(commit_id)
+        Generate a unique URL for a specific build.
+
+    get_highest_log_id(table_name='builds')
+        Retrieve the highest build log id from the database.
+
+    get_log(id, table_name='builds')
+        Retrieve a specific build log from the database.
+
+    get_logs(table_name='builds')
+        Retrieve all build logs from the database.
+
+    log_build(commit_id, build_logs=None, table_name='builds')
+        Log the build details to the specified table in the database.
+
+FILE
+    /Users/melissasaber/Desktop/DD2480-CI/src/app/build_history.py
+
+

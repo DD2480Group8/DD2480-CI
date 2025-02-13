@@ -1,0 +1,42 @@
+Help on module notify:
+
+NAME
+    notify
+
+CLASSES
+    builtins.object
+        GithubNotification
+
+    class GithubNotification(builtins.object)
+     |  GithubNotification(owner, repo, token, target_url, context)
+     |
+     |  Methods defined here:
+     |
+     |  __init__(self, owner, repo, token, target_url, context)
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |
+     |  send_commit_status(self, state, description, sha, run_id)
+     |      Sends a commit status update to GitHub.
+     |
+     |      Args:
+     |          state (str): Commit state
+     |          description (str): Short description of the status.
+     |          sha (str): SHA hash of the commit to update.
+     |          run_id (str): Unique identifier for the related CI/CD run.
+     |
+     |      Raises:
+     |          requests.exceptions.RequestException: If the request fails
+     |
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |
+     |  __dict__
+     |      dictionary for instance variables
+     |
+     |  __weakref__
+     |      list of weak references to the object
+
+FILE
+    /Users/melissasaber/Desktop/DD2480-CI/src/app/notify.py
+
+
