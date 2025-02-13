@@ -116,6 +116,23 @@ docker build . -t {nameofimage}
 ```bash
 docker run -e GITHUB_TOKEN={your_github_token_here} -p 8008:8008 {name of image}
 ```
+## Running pydoc
+1. Make sure you can run the ```pydoc``` command, if not, Install ```pydoc```
+2. cd into the src folder running this command:
+ ```bash
+ cd src
+ ```
+
+ 3. get pydocs for the files in app:
+ ```bash
+ pydoc app/{filename}.py
+ ```
+
+ 4. get pydocs for the files in test:
+ ```bash
+ pydoc test/{filename}.py
+ ```
+
 
 ## Statement of contributions
 
