@@ -116,7 +116,7 @@ docker build . -t {nameofimage}
 ```bash
 docker run -e GITHUB_TOKEN={your_github_token_here} -p 8008:8008 {name of image}
 ```
-## Running pydoc
+## Running pydoc in terminal
 1. Make sure you can run the ```pydoc``` command, if not, Install ```pydoc```
 2. cd into the src folder running this command:
  ```bash
@@ -132,6 +132,9 @@ docker run -e GITHUB_TOKEN={your_github_token_here} -p 8008:8008 {name of image}
  ```bash
  pydoc test/{filename}.py
  ```
+
+## Browsable Documentation
+Run the file htmldoc/index.html in the browser to view the browsable documentation
 
 
 ## Statement of contributions
