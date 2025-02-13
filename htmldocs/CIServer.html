@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module CIServer</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">CIServer</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/Users/feliciamurkes/Documents/KTH/Softwarefundamentals/DD2480-CI/src/app/CIServer.py">/Users/feliciamurkes/Documents/KTH/Softwarefundamentals/DD2480-CI/src/app/CIServer.py</a></td></tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="errno.html">errno</a><br>
+<a href="json.html">json</a><br>
+<a href="os.html">os</a><br>
+</td><td class="multicolumn"><a href="pydoc.html">pydoc</a><br>
+<a href="pylint.html">pylint</a><br>
+<a href="re.html">re</a><br>
+</td><td class="multicolumn"><a href="shutil.html">shutil</a><br>
+<a href="stat.html">stat</a><br>
+<a href="tempfile.html">tempfile</a><br>
+</td><td class="multicolumn"><a href="threading.html">threading</a><br>
+<a href="uuid.html">uuid</a><br>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="http.server.html#BaseHTTPRequestHandler">http.server.BaseHTTPRequestHandler</a>(<a href="socketserver.html#StreamRequestHandler">socketserver.StreamRequestHandler</a>)
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="CIServer.html#SimpleHandler">SimpleHandler</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="SimpleHandler">class <strong>SimpleHandler</strong></a>(<a href="http.server.html#BaseHTTPRequestHandler">http.server.BaseHTTPRequestHandler</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#SimpleHandler">SimpleHandler</a>(request,&nbsp;client_address,&nbsp;server)<br>
+&nbsp;<br>
+<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt>Method resolution order:</dt>
+<dd><a href="CIServer.html#SimpleHandler">SimpleHandler</a></dd>
+<dd><a href="http.server.html#BaseHTTPRequestHandler">http.server.BaseHTTPRequestHandler</a></dd>
+<dd><a href="socketserver.html#StreamRequestHandler">socketserver.StreamRequestHandler</a></dd>
+<dd><a href="socketserver.html#BaseRequestHandler">socketserver.BaseRequestHandler</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="SimpleHandler-do_GET"><strong>do_GET</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SimpleHandler-do_POST"><strong>do_POST</strong></a>(self)</dt><dd><span class="code">Handles&nbsp;POST&nbsp;requests&nbsp;from&nbsp;GitHub&nbsp;webhooks&nbsp;by&nbsp;queueing&nbsp;them&nbsp;for&nbsp;background&nbsp;processing.<br>
+Immediately&nbsp;returns&nbsp;a&nbsp;202&nbsp;Accepted&nbsp;response.</span></dd></dl>
+
+<hr>
+Methods inherited from <a href="http.server.html#BaseHTTPRequestHandler">http.server.BaseHTTPRequestHandler</a>:<br>
+<dl><dt><a name="SimpleHandler-address_string"><strong>address_string</strong></a>(self)</dt><dd><span class="code">Return&nbsp;the&nbsp;client&nbsp;address.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-date_time_string"><strong>date_time_string</strong></a>(self, timestamp=None)</dt><dd><span class="code">Return&nbsp;the&nbsp;current&nbsp;date&nbsp;and&nbsp;time&nbsp;formatted&nbsp;for&nbsp;a&nbsp;message&nbsp;header.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-end_headers"><strong>end_headers</strong></a>(self)</dt><dd><span class="code">Send&nbsp;the&nbsp;blank&nbsp;line&nbsp;ending&nbsp;the&nbsp;MIME&nbsp;headers.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-flush_headers"><strong>flush_headers</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SimpleHandler-handle"><strong>handle</strong></a>(self)</dt><dd><span class="code">Handle&nbsp;multiple&nbsp;requests&nbsp;if&nbsp;necessary.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-handle_expect_100"><strong>handle_expect_100</strong></a>(self)</dt><dd><span class="code">Decide&nbsp;what&nbsp;to&nbsp;do&nbsp;with&nbsp;an&nbsp;"Expect:&nbsp;100-continue"&nbsp;header.<br>
+&nbsp;<br>
+If&nbsp;the&nbsp;client&nbsp;is&nbsp;expecting&nbsp;a&nbsp;100&nbsp;Continue&nbsp;response,&nbsp;we&nbsp;must<br>
+respond&nbsp;with&nbsp;either&nbsp;a&nbsp;100&nbsp;Continue&nbsp;or&nbsp;a&nbsp;final&nbsp;response&nbsp;before<br>
+waiting&nbsp;for&nbsp;the&nbsp;request&nbsp;body.&nbsp;The&nbsp;default&nbsp;is&nbsp;to&nbsp;always&nbsp;respond<br>
+with&nbsp;a&nbsp;100&nbsp;Continue.&nbsp;You&nbsp;can&nbsp;behave&nbsp;differently&nbsp;(for&nbsp;example,<br>
+reject&nbsp;unauthorized&nbsp;requests)&nbsp;by&nbsp;overriding&nbsp;this&nbsp;method.<br>
+&nbsp;<br>
+This&nbsp;method&nbsp;should&nbsp;either&nbsp;return&nbsp;True&nbsp;(possibly&nbsp;after&nbsp;sending<br>
+a&nbsp;100&nbsp;Continue&nbsp;response)&nbsp;or&nbsp;send&nbsp;an&nbsp;error&nbsp;response&nbsp;and&nbsp;return<br>
+False.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-handle_one_request"><strong>handle_one_request</strong></a>(self)</dt><dd><span class="code">Handle&nbsp;a&nbsp;single&nbsp;HTTP&nbsp;request.<br>
+&nbsp;<br>
+You&nbsp;normally&nbsp;don't&nbsp;need&nbsp;to&nbsp;override&nbsp;this&nbsp;method;&nbsp;see&nbsp;the&nbsp;class<br>
+__doc__&nbsp;string&nbsp;for&nbsp;information&nbsp;on&nbsp;how&nbsp;to&nbsp;handle&nbsp;specific&nbsp;HTTP<br>
+commands&nbsp;such&nbsp;as&nbsp;GET&nbsp;and&nbsp;POST.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-log_date_time_string"><strong>log_date_time_string</strong></a>(self)</dt><dd><span class="code">Return&nbsp;the&nbsp;current&nbsp;time&nbsp;formatted&nbsp;for&nbsp;logging.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-log_error"><strong>log_error</strong></a>(self, format, *args)</dt><dd><span class="code">Log&nbsp;an&nbsp;error.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;called&nbsp;when&nbsp;a&nbsp;request&nbsp;cannot&nbsp;be&nbsp;fulfilled.&nbsp;&nbsp;By<br>
+default&nbsp;it&nbsp;passes&nbsp;the&nbsp;message&nbsp;on&nbsp;to&nbsp;<a href="#SimpleHandler-log_message">log_message</a>().<br>
+&nbsp;<br>
+Arguments&nbsp;are&nbsp;the&nbsp;same&nbsp;as&nbsp;for&nbsp;<a href="#SimpleHandler-log_message">log_message</a>().<br>
+&nbsp;<br>
+XXX&nbsp;This&nbsp;should&nbsp;go&nbsp;to&nbsp;the&nbsp;separate&nbsp;error&nbsp;log.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-log_message"><strong>log_message</strong></a>(self, format, *args)</dt><dd><span class="code">Log&nbsp;an&nbsp;arbitrary&nbsp;message.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;used&nbsp;by&nbsp;all&nbsp;other&nbsp;logging&nbsp;functions.&nbsp;&nbsp;Override<br>
+it&nbsp;if&nbsp;you&nbsp;have&nbsp;specific&nbsp;logging&nbsp;wishes.<br>
+&nbsp;<br>
+The&nbsp;first&nbsp;argument,&nbsp;FORMAT,&nbsp;is&nbsp;a&nbsp;format&nbsp;string&nbsp;for&nbsp;the<br>
+message&nbsp;to&nbsp;be&nbsp;logged.&nbsp;&nbsp;If&nbsp;the&nbsp;format&nbsp;string&nbsp;contains<br>
+any&nbsp;%&nbsp;escapes&nbsp;requiring&nbsp;parameters,&nbsp;they&nbsp;should&nbsp;be<br>
+specified&nbsp;as&nbsp;subsequent&nbsp;arguments&nbsp;(it's&nbsp;just&nbsp;like<br>
+printf!).<br>
+&nbsp;<br>
+The&nbsp;client&nbsp;ip&nbsp;and&nbsp;current&nbsp;date/time&nbsp;are&nbsp;prefixed&nbsp;to<br>
+every&nbsp;message.<br>
+&nbsp;<br>
+Unicode&nbsp;control&nbsp;characters&nbsp;are&nbsp;replaced&nbsp;with&nbsp;escaped&nbsp;hex<br>
+before&nbsp;writing&nbsp;the&nbsp;output&nbsp;to&nbsp;stderr.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-log_request"><strong>log_request</strong></a>(self, code='-', size='-')</dt><dd><span class="code">Log&nbsp;an&nbsp;accepted&nbsp;request.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;called&nbsp;by&nbsp;<a href="#SimpleHandler-send_response">send_response</a>().</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-parse_request"><strong>parse_request</strong></a>(self)</dt><dd><span class="code">Parse&nbsp;a&nbsp;request&nbsp;(internal).<br>
+&nbsp;<br>
+The&nbsp;request&nbsp;should&nbsp;be&nbsp;stored&nbsp;in&nbsp;self.<strong>raw_requestline</strong>;&nbsp;the&nbsp;results<br>
+are&nbsp;in&nbsp;self.<strong>command</strong>,&nbsp;self.<strong>path</strong>,&nbsp;self.<strong>request_version</strong>&nbsp;and<br>
+self.<strong>headers</strong>.<br>
+&nbsp;<br>
+Return&nbsp;True&nbsp;for&nbsp;success,&nbsp;False&nbsp;for&nbsp;failure;&nbsp;on&nbsp;failure,&nbsp;any&nbsp;relevant<br>
+error&nbsp;response&nbsp;has&nbsp;already&nbsp;been&nbsp;sent&nbsp;back.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-send_error"><strong>send_error</strong></a>(self, code, message=None, explain=None)</dt><dd><span class="code">Send&nbsp;and&nbsp;log&nbsp;an&nbsp;error&nbsp;reply.<br>
+&nbsp;<br>
+Arguments&nbsp;are<br>
+*&nbsp;code:&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;HTTP&nbsp;error&nbsp;code<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;digits<br>
+*&nbsp;message:&nbsp;a&nbsp;simple&nbsp;optional&nbsp;1&nbsp;line&nbsp;reason&nbsp;phrase.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(&nbsp;HTAB&nbsp;/&nbsp;SP&nbsp;/&nbsp;VCHAR&nbsp;/&nbsp;%x80-FF&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;defaults&nbsp;to&nbsp;short&nbsp;entry&nbsp;matching&nbsp;the&nbsp;response&nbsp;code<br>
+*&nbsp;explain:&nbsp;a&nbsp;detailed&nbsp;message&nbsp;defaults&nbsp;to&nbsp;the&nbsp;long&nbsp;entry<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;matching&nbsp;the&nbsp;response&nbsp;code.<br>
+&nbsp;<br>
+This&nbsp;sends&nbsp;an&nbsp;error&nbsp;response&nbsp;(so&nbsp;it&nbsp;must&nbsp;be&nbsp;called&nbsp;before&nbsp;any<br>
+output&nbsp;has&nbsp;been&nbsp;generated),&nbsp;logs&nbsp;the&nbsp;error,&nbsp;and&nbsp;finally&nbsp;sends<br>
+a&nbsp;piece&nbsp;of&nbsp;HTML&nbsp;explaining&nbsp;the&nbsp;error&nbsp;to&nbsp;the&nbsp;user.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-send_header"><strong>send_header</strong></a>(self, keyword, value)</dt><dd><span class="code">Send&nbsp;a&nbsp;MIME&nbsp;header&nbsp;to&nbsp;the&nbsp;headers&nbsp;buffer.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-send_response"><strong>send_response</strong></a>(self, code, message=None)</dt><dd><span class="code">Add&nbsp;the&nbsp;response&nbsp;header&nbsp;to&nbsp;the&nbsp;headers&nbsp;buffer&nbsp;and&nbsp;log&nbsp;the<br>
+response&nbsp;code.<br>
+&nbsp;<br>
+Also&nbsp;send&nbsp;two&nbsp;standard&nbsp;headers&nbsp;with&nbsp;the&nbsp;server&nbsp;software<br>
+version&nbsp;and&nbsp;the&nbsp;current&nbsp;date.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-send_response_only"><strong>send_response_only</strong></a>(self, code, message=None)</dt><dd><span class="code">Send&nbsp;the&nbsp;response&nbsp;header&nbsp;only.</span></dd></dl>
+
+<dl><dt><a name="SimpleHandler-version_string"><strong>version_string</strong></a>(self)</dt><dd><span class="code">Return&nbsp;the&nbsp;server&nbsp;software&nbsp;version&nbsp;string.</span></dd></dl>
+
+<hr>
+Data and other attributes inherited from <a href="http.server.html#BaseHTTPRequestHandler">http.server.BaseHTTPRequestHandler</a>:<br>
+<dl><dt><strong>MessageClass</strong> = &lt;class 'http.client.HTTPMessage'&gt;</dl>
+
+<dl><dt><strong>default_request_version</strong> = 'HTTP/0.9'</dl>
+
+<dl><dt><strong>error_content_type</strong> = 'text/html;charset=utf-8'</dl>
+
+<dl><dt><strong>error_message_format</strong> = '&lt;!DOCTYPE HTML&gt;<span class="repr">\n</span>&lt;html lang="en"&gt;<span class="repr">\n</span>    &lt;head&gt;<span class="repr">\n</span>    ... %(code)s - %(explain)s.&lt;/p&gt;<span class="repr">\n</span>    &lt;/body&gt;<span class="repr">\n</span>&lt;/html&gt;<span class="repr">\n</span>'</dl>
+
+<dl><dt><strong>monthname</strong> = [None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']</dl>
+
+<dl><dt><strong>protocol_version</strong> = 'HTTP/1.0'</dl>
+
+<dl><dt><strong>responses</strong> = {&lt;HTTPStatus.CONTINUE: 100&gt;: ('Continue', 'Request received, please continue'), &lt;HTTPStatus.SWITCHING_PROTOCOLS: 101&gt;: ('Switching Protocols', 'Switching to new protocol; obey Upgrade header'), &lt;HTTPStatus.PROCESSING: 102&gt;: ('Processing', ''), &lt;HTTPStatus.EARLY_HINTS: 103&gt;: ('Early Hints', ''), &lt;HTTPStatus.OK: 200&gt;: ('OK', 'Request fulfilled, document follows'), &lt;HTTPStatus.CREATED: 201&gt;: ('Created', 'Document created, URL follows'), &lt;HTTPStatus.ACCEPTED: 202&gt;: ('Accepted', 'Request accepted, processing continues off-line'), &lt;HTTPStatus.NON_AUTHORITATIVE_INFORMATION: 203&gt;: ('Non-Authoritative Information', 'Request fulfilled from cache'), &lt;HTTPStatus.NO_CONTENT: 204&gt;: ('No Content', 'Request fulfilled, nothing follows'), &lt;HTTPStatus.RESET_CONTENT: 205&gt;: ('Reset Content', 'Clear input form for further input'), ...}</dl>
+
+<dl><dt><strong>server_version</strong> = 'BaseHTTP/0.6'</dl>
+
+<dl><dt><strong>sys_version</strong> = 'Python/3.13.1'</dl>
+
+<dl><dt><strong>weekdayname</strong> = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']</dl>
+
+<hr>
+Methods inherited from <a href="socketserver.html#StreamRequestHandler">socketserver.StreamRequestHandler</a>:<br>
+<dl><dt><a name="SimpleHandler-finish"><strong>finish</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SimpleHandler-setup"><strong>setup</strong></a>(self)</dt></dl>
+
+<hr>
+Data and other attributes inherited from <a href="socketserver.html#StreamRequestHandler">socketserver.StreamRequestHandler</a>:<br>
+<dl><dt><strong>disable_nagle_algorithm</strong> = False</dl>
+
+<dl><dt><strong>rbufsize</strong> = -1</dl>
+
+<dl><dt><strong>timeout</strong> = None</dl>
+
+<dl><dt><strong>wbufsize</strong> = 0</dl>
+
+<hr>
+Methods inherited from <a href="socketserver.html#BaseRequestHandler">socketserver.BaseRequestHandler</a>:<br>
+<dl><dt><a name="SimpleHandler-__init__"><strong>__init__</strong></a>(self, request, client_address, server)</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="socketserver.html#BaseRequestHandler">socketserver.BaseRequestHandler</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-handle_remove_readonly"><strong>handle_remove_readonly</strong></a>(func, path, exc)</dt><dd><span class="code">Handles&nbsp;removal&nbsp;of&nbsp;read-only&nbsp;files&nbsp;by&nbsp;modifying&nbsp;permissions.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;func:&nbsp;Function&nbsp;that&nbsp;triggered&nbsp;the&nbsp;error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path:&nbsp;File&nbsp;path&nbsp;causing&nbsp;the&nbsp;issue<br>
+&nbsp;&nbsp;&nbsp;&nbsp;exc:&nbsp;Exception&nbsp;details</span></dd></dl>
+ <dl><dt><a name="-process_queue"><strong>process_queue</strong></a>()</dt><dd><span class="code">Worker&nbsp;function&nbsp;that&nbsp;processes&nbsp;tasks&nbsp;from&nbsp;the&nbsp;queue&nbsp;continuously.</span></dd></dl>
+ <dl><dt><a name="-process_webhook_payload"><strong>process_webhook_payload</strong></a>(payload, log_id)</dt></dl>
+ <dl><dt><a name="-remove_temp_folder"><strong>remove_temp_folder</strong></a>(folder)</dt><dd><span class="code">Removes&nbsp;a&nbsp;temporary&nbsp;folder.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;folder&nbsp;(str):&nbsp;Path&nbsp;of&nbsp;the&nbsp;directory&nbsp;to&nbsp;be&nbsp;removed.</span></dd></dl>
+ <dl><dt><a name="-run_server"><strong>run_server</strong></a>(port)</dt><dd><span class="code">Starts&nbsp;an&nbsp;HTTP&nbsp;server&nbsp;on&nbsp;the&nbsp;specified&nbsp;port&nbsp;with&nbsp;a&nbsp;background&nbsp;worker&nbsp;thread.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>task_queue</strong> = &lt;queue.Queue object&gt;</td></tr></table>
+</body></html>

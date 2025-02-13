@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module clone</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">clone</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/Users/feliciamurkes/Documents/KTH/Softwarefundamentals/DD2480-CI/src/app/clone.py">/Users/feliciamurkes/Documents/KTH/Softwarefundamentals/DD2480-CI/src/app/clone.py</a></td></tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="os.html">os</a><br>
+</td><td class="multicolumn"><a href="shutil.html">shutil</a><br>
+</td><td class="multicolumn"><a href="tempfile.html">tempfile</a><br>
+</td><td class="multicolumn"><a href="uuid.html">uuid</a><br>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-clone_check"><strong>clone_check</strong></a>(repo_url, branch)</dt><dd><span class="code">Clones&nbsp;a&nbsp;Git&nbsp;repository&nbsp;to&nbsp;a&nbsp;temporary&nbsp;directory&nbsp;and&nbsp;returns&nbsp;the&nbsp;directory&nbsp;path.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;repo_url&nbsp;(str):&nbsp;URL&nbsp;of&nbsp;the&nbsp;Git&nbsp;repository&nbsp;to&nbsp;clone.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;branch&nbsp;(str):&nbsp;The&nbsp;branch&nbsp;to&nbsp;clone.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;Path&nbsp;to&nbsp;the&nbsp;cloned&nbsp;repository&nbsp;if&nbsp;successful.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;Error&nbsp;details&nbsp;if&nbsp;cloning&nbsp;fails.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Exception:&nbsp;If&nbsp;an&nbsp;error&nbsp;occurs&nbsp;during&nbsp;cloning,&nbsp;the&nbsp;function&nbsp;cleans&nbsp;up&nbsp;and&nbsp;returns&nbsp;an&nbsp;error&nbsp;dictionary.</span></dd></dl>
+ <dl><dt><a name="-ensure_tmp_directory"><strong>ensure_tmp_directory</strong></a>()</dt><dd><span class="code">Ensures&nbsp;the&nbsp;existence&nbsp;of&nbsp;the&nbsp;temporary&nbsp;directory&nbsp;used&nbsp;for&nbsp;cloning&nbsp;repositories.<br>
+&nbsp;<br>
+Creates&nbsp;the&nbsp;directory&nbsp;at&nbsp;TMP_PATH&nbsp;if&nbsp;it&nbsp;does&nbsp;not&nbsp;exist&nbsp;and&nbsp;sets&nbsp;permissions&nbsp;to&nbsp;755.<br>
+Prints&nbsp;a&nbsp;message&nbsp;when&nbsp;the&nbsp;directory&nbsp;is&nbsp;created.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Exception:&nbsp;If&nbsp;an&nbsp;error&nbsp;occurs&nbsp;while&nbsp;creating&nbsp;the&nbsp;directory.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>PROJ_ROOT</strong> = '/Users/feliciamurkes/Documents/KTH/Softwarefundamentals/DD2480-CI/src'<br>
+<strong>TMP_PATH</strong> = '/Users/feliciamurkes/Documents/KTH/Softwarefundamentals/DD2480-CI/src/tmp'</td></tr></table>
+</body></html>
