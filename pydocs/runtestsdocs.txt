@@ -1,0 +1,19 @@
+Help on module runTests:
+
+NAME
+    runTests
+
+FUNCTIONS
+    run_tests(tests_path) -> bool
+        Runs automated tests using pytest and returns whether all tests pass.
+
+        Args:
+                tests_path (str): Base directory containing the 'src/test' subdirectory.
+
+        Returns:
+                bool: True if all tests pass, False otherwise.
+
+FILE
+    /Users/melissasaber/Desktop/DD2480-CI/src/app/runTests.py
+
+

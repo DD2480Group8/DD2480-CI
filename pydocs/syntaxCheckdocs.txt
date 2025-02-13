@@ -1,0 +1,20 @@
+Help on module syntax_check:
+
+NAME
+    syntax_check
+
+FUNCTIONS
+    syntax_check(directory)
+        Checks Python files in a directory for syntax errors using Pylint.
+
+        Args:
+            directory (str): Path to the directory containing Python files.
+
+        Returns:
+            dict: Contains status ("success", "error", or "warning"), a message,
+                  files checked, error count, and details if errors exist.
+
+FILE
+    /Users/melissasaber/Desktop/DD2480-CI/src/app/syntax_check.py
+
+
