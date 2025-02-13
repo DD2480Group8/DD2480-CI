@@ -118,11 +118,6 @@ def process_webhook_payload(payload,log_id):
             if not commit_id:   
                 raise Exception("Error cloning repository.")
             
-            if test_logs != "Test logs here": 
-                logs = f"Syntax Check Logs: {syntaxcheck['details']} \nTest Logs: {test_logs}"
-                log_build(commit_id, logs)                       
-                github_commit_url = get_github_commit_url(commit_id)
-                
             
             return True
             
