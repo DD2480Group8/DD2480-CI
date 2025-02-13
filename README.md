@@ -127,6 +127,8 @@ docker run -e GITHUB_TOKEN={your_github_token_here} -p 8008:8008 {name of image}
 - Made some tests for do_post, clonechecker and syntax check
 - Some fixes to broken tests
 - Added two get endpoints to view the log history
+- Added queue to prevent timeout
+- Added logging
 
 ### Eyüp Ahmet Başaran
 - Implemented core feature 1
@@ -141,6 +143,8 @@ docker run -e GITHUB_TOKEN={your_github_token_here} -p 8008:8008 {name of image}
 ### Ismail 
 - Implemeted database
 - Tests for syntax check
+- Implemented test cases for database
+- database bug fixes
 
 ### Melissa Saber
 - Implemented core feature 2
