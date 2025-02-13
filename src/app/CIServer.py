@@ -45,6 +45,17 @@ def process_queue():
             task_queue.task_done()
 
 def process_webhook_payload(payload,log_id):
+    """
+        Processes a webhook payload from GitHub, performing syntax checks and running tests on the specified repository.
+        Args:
+            payload (dict): The webhook payload from GitHub containing repository and commit information.
+            log_id (str): The unique identifier for the log entry.
+        Returns:
+            bool: True if the process completes successfully, False otherwise.
+        Raises:
+            Exception: If there are errors during cloning, syntax checking, or testing.
+        
+    """
     try:
             token = os.getenv('GITHUB_TOKEN')
             repo_url = payload['repository']['clone_url']
